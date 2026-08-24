@@ -56,7 +56,7 @@ def test_app_user_model_id_is_stable_and_unversioned():
 
 
 def test_final_spec_embeds_ico():
-    spec = (ROOT / "BMTVoiceStudio-1.3.35.spec").read_text(encoding="utf-8")
+    spec = (ROOT / "BMTVoiceStudio-1.3.36.spec").read_text(encoding="utf-8")
     assert 'icon="bmt_voice_studio/resources/bmt_voice_studio.ico"' in spec
     assert "bmt_voice_studio/resources/bmt_voice_studio.ico" in spec
     assert "pyi_rth_bmt_appid.py" in spec

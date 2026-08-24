@@ -780,12 +780,20 @@ def _embed_locked_mp3_artwork(mp3_path: Path, job: DailyJob, language: str) -> N
             "sw": job.swahili_text,
             "pt": job.portuguese_text,
         }
-        meta = extract_metadata(texts.get((language or "en").lower(), "") or job.english_text)
+        language_id = (language or "en").lower()
+        source_text = texts.get(language_id, "")
+        meta = extract_metadata(source_text)
+        topic = str(meta.get("topic") or "").strip()
+        # Do not brand a translated MP3 with an English or generic topic.
+        # If the translated source lacks its explicit topic label, leave the
+        # audio untouched and let Video Maker surface the validation error.
+        if not topic:
+            return
         project = VideoProject(
-            topic=meta.get("topic") or "",
-            title=meta.get("title") or "",
+            topic=topic,
+            title=meta.get("title") or topic,
             devotional_date=job.date.isoformat(),
-            language=(language or "en").lower(),
+            language=language_id,
         )
         jpeg = locked_card_jpeg_bytes(project)
         embed_locked_artwork(

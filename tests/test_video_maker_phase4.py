@@ -345,8 +345,8 @@ def test_project_recovery_keeps_phase4_fields(tmp_path: Path, monkeypatch):
 
 def test_rc_runtime_identity():
     root = Path(__file__).resolve().parents[1]
-    assert __version__ == "1.3.35"
-    assert (root / "VERSION").read_text(encoding="utf-8").strip() == "1.3.35"
+    assert __version__ == "1.3.36"
+    assert (root / "VERSION").read_text(encoding="utf-8").strip() == "1.3.36"
     assert BUILD_LABEL == "Final"
     about = (root / "bmt_voice_studio" / "ui" / "dialogs" / "about.py").read_text(encoding="utf-8")
     assert "BUILD_LABEL" in about

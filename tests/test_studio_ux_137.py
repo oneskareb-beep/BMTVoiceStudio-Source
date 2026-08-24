@@ -34,8 +34,8 @@ def _window(monkeypatch, tmp_path):
 
 def test_identity_137():
     root = Path(__file__).resolve().parents[1]
-    assert __version__ == "1.3.35"
-    assert (root / "VERSION").read_text(encoding="utf-8").strip() == "1.3.35"
+    assert __version__ == "1.3.36"
+    assert (root / "VERSION").read_text(encoding="utf-8").strip() == "1.3.36"
     assert (root / "BMTVoiceStudio-1.3.6.spec").is_file()
     assert (root / "BMTVoiceStudio-1.3.7.spec").is_file()
     assert (root / "BMTVoiceStudio-1.3.8.spec").is_file()
@@ -49,7 +49,7 @@ def test_identity_137():
     assert (root / "BMTVoiceStudio-1.3.16.spec").is_file()
     assert (root / "BMTVoiceStudio-1.3.17.spec").is_file()
     assert (root / "BMTVoiceStudio-1.3.33.spec").is_file()
-    assert (root / "BMTVoiceStudio-1.3.35.spec").is_file()
+    assert (root / "BMTVoiceStudio-1.3.36.spec").is_file()
 
 
 def test_header_audio_video_and_hidden_idle_progress(qapp, tmp_path, monkeypatch):

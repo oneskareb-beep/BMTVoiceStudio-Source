@@ -599,8 +599,15 @@ def write_ass(
     width: int = 1080,
     height: int = 1920,
     style=None,
+    motion: bool = False,
 ) -> Path:
-    """BMT CLEAN CAPTIONS — ASS with safe lower margin, stroke, and user type size."""
+    """BMT CLEAN CAPTIONS with optional voice-timed gentle upward motion.
+
+    ``motion=True`` keeps the existing sentence/voice timing but glides each
+    devotional sentence a few pixels upward while it is spoken. The movement
+    stays inside the 9:16 safe area and does not convert the script into a
+    separate, unsynchronised marquee/teleprompter layer.
+    """
     from bmt_voice_studio.video.models import TextStyle
 
     text_style = (style or TextStyle()).normalized()
@@ -633,9 +640,24 @@ def write_ass(
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n"
     )
     lines = [header]
+    anchor_x = max(1, int(width) // 2)
+    anchor_y = max(1, int(height) - margin_v)
+    motion_px = max(8, min(24, int(round(max(1, int(height)) * 0.008))))
     for cue in cues:
         text = (cue.text or "").replace("\r", "").replace("\n", r"\N")
         text = text.replace("{", "(").replace("}", ")")
+        if motion:
+            # Alignment=2 means the coordinates are the bottom-centre anchor.
+            # Keep both endpoints inside the same safe lower caption region.
+            # Start exactly on the configured bottom safe-margin anchor, then
+            # glide upward. Never move closer to the bottom edge than margin_v.
+            start_y = anchor_y
+            end_y = max(int(height) // 2, anchor_y - motion_px)
+            duration_ms = max(1, int(round(max(0.001, cue.end - cue.start) * 1000.0)))
+            text = (
+                rf"{{\move({anchor_x},{start_y},{anchor_x},{end_y},0,{duration_ms})"
+                rf"\fad(120,120)}}" + text
+            )
         lines.append(
             f"Dialogue: 0,{_ass_timestamp(cue.start)},{_ass_timestamp(cue.end)},Default,,0,0,0,,{text}\n"
         )

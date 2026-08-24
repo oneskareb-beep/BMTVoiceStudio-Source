@@ -47,6 +47,13 @@ ProgressCb = Callable[[int, str], None]
 
 NO_WINDOW = subprocess.CREATE_NO_WINDOW if hasattr(subprocess, "CREATE_NO_WINDOW") else 0
 
+# The first encoded frame must already contain the branded card so social/WhatsApp
+# preview extraction never lands on black.
+INTRO_FADE_IN_SEC = 0.0
+# Landscape meditation stills keep the 1/4 + 2/4 + 1/4 band composition while
+# receiving only a very small Ken Burns move.
+BAND_KEN_BURNS_AMOUNT = 0.045
+
 
 def ffmpeg_executable(ffmpeg: FFmpegService | None = None) -> str:
     ff = ffmpeg or FFmpegService()
@@ -64,7 +71,7 @@ def fit_filter(
 ) -> str:
     mode = (fit_mode or "").lower()
     if mode == FitMode.BAND.value:
-        # Mid-band paysage: ignore pan/zoom so the 1/4·2/4·1/4 layout stays locked.
+        # Static mid-band geometry. ken_burns_filter() has a separate band-safe motion path.
         return ffmpeg_mid_band_filter(width, height, pad_color)
     if mode == FitMode.FIT.value:
         return ffmpeg_positioned_contain_filter(width, height, crop_x, crop_y, zoom, pad_color)
@@ -88,41 +95,71 @@ def ken_burns_filter(
 ) -> str:
     """Subtle Ken Burns. Work canvas is ~11% larger so zoom/pan never stretches."""
     frames = max(1, int(round(float(duration) * fps)))
-    work_w = int(round(width * 1.12))
-    work_h = int(round(height * 1.12))
-    # Keep even dimensions for yuv420p / x264.
-    work_w += work_w % 2
-    work_h += work_h % 2
-    base = fit_filter(fit_mode, work_w, work_h, crop_x, crop_y, zoom)
     mode = (animation or AnimationMode.ZOOM_IN.value).lower()
     amount = max(0.02, min(0.12, float(zoom_amount or 0.10)))
+
+    # BAND is a locked landscape strip in the middle half of the 9:16 canvas.
+    # Animate *inside the strip* and pad back to the full canvas afterwards;
+    # zooming the already-padded full frame would make the top/bottom quarters
+    # drift and destroy the intended 1/4 + 2/4 + 1/4 layout.
+    band_mode = (fit_mode or "").lower() == FitMode.BAND.value
+    if band_mode:
+        band_h = max(2, int(height) // 2)
+        band_h += band_h % 2
+        band_y = max(0, (int(height) - band_h) // 2)
+        band_y -= band_y % 2
+        work_w = int(round(width * 1.08))
+        work_h = int(round(band_h * 1.08))
+        work_w += work_w % 2
+        work_h += work_h % 2
+        base = (
+            f"scale={work_w}:{work_h}:force_original_aspect_ratio=decrease,"
+            f"pad={work_w}:{work_h}:(ow-iw)/2:(oh-ih)/2:color=0x0F141C"
+        )
+        out_h = band_h
+    else:
+        work_w = int(round(width * 1.12))
+        work_h = int(round(height * 1.12))
+        # Keep even dimensions for yuv420p / x264.
+        work_w += work_w % 2
+        work_h += work_h % 2
+        base = fit_filter(fit_mode, work_w, work_h, crop_x, crop_y, zoom)
+        out_h = height
+
     zoom_step = amount / max(1, frames)
     zmax = 1.0 + amount
     if mode == AnimationMode.STATIC.value:
-        zp = f"zoompan=z=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{height}:fps={fps}"
+        zp = f"zoompan=z=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{out_h}:fps={fps}"
     elif mode == AnimationMode.ZOOM_OUT.value:
         zp = (
             f"zoompan=z='max({zmax:.3f}-{zoom_step}*on,1.0)':"
-            f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{height}:fps={fps}"
+            f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{out_h}:fps={fps}"
         )
     elif mode == AnimationMode.PAN_LR.value:
         zp = (
             f"zoompan=z={1.0 + amount * 0.8:.3f}:"
             f"x='(iw-iw/zoom)*on/{max(1, frames - 1)}':"
-            f"y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{height}:fps={fps}"
+            f"y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{out_h}:fps={fps}"
         )
     elif mode == AnimationMode.PAN_RL.value:
         zp = (
             f"zoompan=z={1.0 + amount * 0.8:.3f}:"
             f"x='(iw-iw/zoom)*(1-on/{max(1, frames - 1)})':"
-            f"y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{height}:fps={fps}"
+            f"y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{out_h}:fps={fps}"
         )
     else:
         zp = (
             f"zoompan=z='min(1.0+{zoom_step}*on,{zmax:.3f})':"
-            f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{height}:fps={fps}"
+            f"x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{out_h}:fps={fps}"
         )
-    vf = f"{base},{zp},{scene_normalize_filter(width, height, fps)}"
+    if band_mode:
+        vf = (
+            f"{base},{zp},"
+            f"pad={width}:{height}:0:{band_y}:color=0x0F141C,"
+            f"{scene_normalize_filter(width, height, fps)}"
+        )
+    else:
+        vf = f"{base},{zp},{scene_normalize_filter(width, height, fps)}"
     fade = max(0.0, float(fade_in or 0.0))
     if fade > 0.04:
         vf = f"{vf},fade=t=in:st=0:d={min(fade, max(0.2, duration * 0.35)):.3f}"
@@ -932,6 +969,7 @@ class VideoRenderer:
                         width=plan.width,
                         height=plan.height,
                         style=getattr(project, "text_style", None),
+                        motion=True,
                     )
                     plan.caption_path = str(ass_path)
                     caption_filter = ffmpeg_ass_filter(ass_path)
@@ -1061,7 +1099,7 @@ class VideoRenderer:
                 animation=scene.animation_mode,
                 fit_mode=FitMode.FILL.value,
                 zoom_amount=0.045 if kind == SceneKind.INTRO.value else 0.05,
-                fade_in=0.85 if kind == SceneKind.INTRO.value else 0.55,
+                fade_in=INTRO_FADE_IN_SEC if kind == SceneKind.INTRO.value else 0.55,
             )
         elif kind == SceneKind.VIDEO.value:
             if not Path(scene.media_path).is_file():
@@ -1106,6 +1144,7 @@ class VideoRenderer:
                 crop_x=scene.crop_x,
                 crop_y=scene.crop_y,
                 zoom=scene.zoom,
+                zoom_amount=BAND_KEN_BURNS_AMOUNT if scene.fit_mode == FitMode.BAND.value else 0.10,
                 overlay_path=scene.overlay_path,
                 overlay_zoom=scene.overlay_zoom,
                 overlay_crop_x=getattr(scene, "overlay_crop_x", 0.0),

@@ -303,27 +303,19 @@ def _extract_memory_verse(text: str) -> str:
 def extract_metadata(text: str) -> dict[str, str]:
     """Pull topic / week focus / month theme / title / memory verse from script lines.
 
-    Prefers labelled structured lines. Does not invent missing fields besides a
-    first-line topic fallback when no Topic: label exists.
+    Metadata is accepted only from explicit structured labels. In particular,
+    the daily topic is never guessed from the first non-empty line: doing that
+    can turn headers such as ``Memory Verse`` or stray English text into the
+    title of a French, Swahili, or Portuguese video.
     """
     topic = ""
     week_focus = ""
     month_theme = ""
     title = ""
-    first_line = ""
     for raw in (text or "").splitlines():
         line = raw.strip()
         if not line:
             continue
-        if not first_line and not line.startswith("{") and len(line) > 3:
-            skip = line.lower() in {
-                "believers manna today",
-                "believers manna today daily devotional",
-                "daily devotional",
-                "bmt",
-            }
-            if not skip and not re.match(r"^\d{1,2}\s+\w+", line) and not line.lower().startswith("written "):
-                first_line = line
         for key, pattern in _LABEL_PATTERNS.items():
             m = pattern.match(line)
             if not m:
@@ -337,8 +329,6 @@ def extract_metadata(text: str) -> dict[str, str]:
                 month_theme = value
             elif key == "title" and not title:
                 title = value
-    if not topic:
-        topic = first_line[:160]
     if not title:
         title = topic
     from bmt_voice_studio.daily.message_date import detect_message_date

@@ -1626,7 +1626,15 @@ class VideoMakerPage(QWidget):
         incomplete = [t for t in self._tracks if t.language in selected and not t.metadata_complete]
         if incomplete:
             names = ", ".join(language_label(t.language) for t in incomplete)
-            self.status_message.emit(f"Metadata incomplete: {names}")
+            show_error(
+                self,
+                "Generate Video",
+                "The actual daily topic is missing for: "
+                f"{names}. Open each language and provide its translated Topic/Thème/Mada/Tema "
+                "before generating. BMT Voice Studio will not publish an English or generic fallback.",
+            )
+            self.status_message.emit(f"Missing localized topic: {names}")
+            return
         self._batch_projects = projects_for_batch(project, selected)
         self._batch_errors = []
         if not self._batch_projects:

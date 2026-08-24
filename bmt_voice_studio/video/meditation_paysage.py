@@ -83,7 +83,7 @@ def media_item_for_language(language: str | None, *, order: int = 0) -> MediaIte
         )
     item.order = order
     item.fit_mode = FitMode.BAND.value
-    item.animation_mode = AnimationMode.STATIC.value
+    item.animation_mode = AnimationMode.ZOOM_IN.value
     item.crop_x = 0.0
     item.crop_y = 0.0
     item.zoom = 1.0
