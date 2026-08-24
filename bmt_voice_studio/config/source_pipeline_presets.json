@@ -1,0 +1,105 @@
+{
+  "version": "1.2",
+  "presets": {
+    "bmt_english": {
+      "id": "bmt_english",
+      "name": "BMT ENGLISH",
+      "language": "en-NG",
+      "male_voice": "en-NG-AbeoNeural",
+      "female_voice": "en-NG-EzinneNeural",
+      "rate": "-10%",
+      "pitch": "-3Hz",
+      "volume": "+0%",
+      "provider": "edge",
+      "ui_hint": "English devotional",
+      "pipeline": {
+        "pause_ms": 500,
+        "lowpass_hz": 7000,
+        "wav_channels": 1,
+        "wav_sample_rate": 44100,
+        "mp3_bitrate_kbps": 192,
+        "export_wav": false,
+        "export_mp3": true,
+        "strict_source_mode": true,
+        "default_processing_mode": "original",
+        "allow_piper_fallback": false,
+        "apply_bmt_mastering": false
+      }
+    },
+    "bmt_french": {
+      "id": "bmt_french",
+      "name": "BMT FRENCH",
+      "language": "fr-FR",
+      "male_voice": "fr-FR-HenriNeural",
+      "female_voice": "fr-FR-DeniseNeural",
+      "rate": "-8%",
+      "pitch": "-1Hz",
+      "volume": "+5%",
+      "provider": "edge",
+      "ui_hint": "French devotional",
+      "pipeline": {
+        "pause_ms": 500,
+        "lowpass_hz": null,
+        "wav_channels": 1,
+        "wav_sample_rate": 44100,
+        "mp3_bitrate_kbps": null,
+        "export_wav": false,
+        "export_mp3": true,
+        "strict_source_mode": true,
+        "default_processing_mode": "original",
+        "allow_piper_fallback": false,
+        "apply_bmt_mastering": false
+      }
+    },
+    "bmt_swahili": {
+      "id": "bmt_swahili",
+      "name": "BMT SWAHILI",
+      "language": "sw-TZ",
+      "male_voice": "sw-TZ-DaudiNeural",
+      "female_voice": "sw-TZ-RehemaNeural",
+      "rate": "-10%",
+      "pitch": "-3Hz",
+      "volume": "+5%",
+      "provider": "edge",
+      "ui_hint": "Swahili devotional",
+      "pipeline": {
+        "pause_ms": 500,
+        "lowpass_hz": 7000,
+        "wav_channels": 1,
+        "wav_sample_rate": 44100,
+        "mp3_bitrate_kbps": 192,
+        "export_wav": false,
+        "export_mp3": true,
+        "strict_source_mode": true,
+        "default_processing_mode": "original",
+        "allow_piper_fallback": false,
+        "apply_bmt_mastering": false
+      }
+    },
+    "bmt_portuguese": {
+      "id": "bmt_portuguese",
+      "name": "BMT PORTUGUESE",
+      "language": "pt-BR",
+      "male_voice": "pt-BR-AntonioNeural",
+      "female_voice": "pt-BR-FranciscaNeural",
+      "rate": "-10%",
+      "pitch": "-3Hz",
+      "volume": "+5%",
+      "provider": "edge",
+      "ui_hint": "Portuguese devotional",
+      "pipeline": {
+        "pause_ms": 500,
+        "lowpass_hz": 7000,
+        "wav_channels": 1,
+        "wav_sample_rate": 44100,
+        "mp3_bitrate_kbps": 192,
+        "export_wav": false,
+        "export_mp3": true,
+        "strict_source_mode": true,
+        "default_processing_mode": "original",
+        "allow_piper_fallback": false,
+        "apply_bmt_mastering": false
+      }
+    }
+  }
+}

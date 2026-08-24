@@ -1,0 +1,132 @@
+{
+  "license": "Mixkit Free License (https://mixkit.co/license/)",
+  "note": "Free for commercial use; attribution appreciated but not required.",
+  "templates": {
+    "bmt_nature": [
+      {
+        "slot": 1,
+        "file": "clip_01.mp4",
+        "mixkit_id": 40657,
+        "title": "Forest canopy path",
+        "source": "https://assets.mixkit.co/videos/40657/40657-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/40657/"
+      },
+      {
+        "slot": 2,
+        "file": "clip_02.mp4",
+        "mixkit_id": 5008,
+        "title": "Tranquil lake reflection",
+        "source": "https://assets.mixkit.co/videos/5008/5008-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/5008/"
+      },
+      {
+        "slot": 3,
+        "file": "clip_03.mp4",
+        "mixkit_id": 21577,
+        "title": "Green meadow",
+        "source": "https://assets.mixkit.co/videos/21577/21577-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/21577/"
+      },
+      {
+        "slot": 4,
+        "file": "clip_04.mp4",
+        "mixkit_id": 1780,
+        "title": "Golden sunset over hills",
+        "source": "https://assets.mixkit.co/videos/1780/1780-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/1780/"
+      },
+      {
+        "slot": 5,
+        "file": "clip_05.mp4",
+        "mixkit_id": 28341,
+        "title": "Misty forest morning",
+        "source": "https://assets.mixkit.co/videos/28341/28341-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/28341/"
+      }
+    ],
+    "bmt_classic": [
+      {
+        "slot": 1,
+        "file": "clip_01.mp4",
+        "mixkit_id": 4119,
+        "title": "Warm sunset sky",
+        "source": "https://assets.mixkit.co/videos/4119/4119-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/4119/"
+      },
+      {
+        "slot": 2,
+        "file": "clip_02.mp4",
+        "mixkit_id": 4396,
+        "title": "Mountain vista",
+        "source": "https://assets.mixkit.co/videos/4396/4396-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/4396/"
+      },
+      {
+        "slot": 3,
+        "file": "clip_03.mp4",
+        "mixkit_id": 4374,
+        "title": "Peaceful river",
+        "source": "https://assets.mixkit.co/videos/4374/4374-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/4374/"
+      },
+      {
+        "slot": 4,
+        "file": "clip_04.mp4",
+        "mixkit_id": 1187,
+        "title": "Golden hour clouds",
+        "source": "https://assets.mixkit.co/videos/1187/1187-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/1187/"
+      },
+      {
+        "slot": 5,
+        "file": "clip_05.mp4",
+        "mixkit_id": 5039,
+        "title": "Sunlit forest trail",
+        "source": "https://assets.mixkit.co/videos/5039/5039-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/5039/"
+      }
+    ],
+    "bmt_minimal": [
+      {
+        "slot": 1,
+        "file": "clip_01.mp4",
+        "mixkit_id": 4070,
+        "title": "Soft drifting clouds",
+        "source": "https://assets.mixkit.co/videos/4070/4070-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/4070/"
+      },
+      {
+        "slot": 2,
+        "file": "clip_02.mp4",
+        "mixkit_id": 4132,
+        "title": "Calm cloudscape",
+        "source": "https://assets.mixkit.co/videos/4132/4132-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/4132/"
+      },
+      {
+        "slot": 3,
+        "file": "clip_03.mp4",
+        "mixkit_id": 1164,
+        "title": "Gentle water surface",
+        "source": "https://assets.mixkit.co/videos/1164/1164-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/1164/"
+      },
+      {
+        "slot": 4,
+        "file": "clip_04.mp4",
+        "mixkit_id": 50944,
+        "title": "Soft fog over trees",
+        "source": "https://assets.mixkit.co/videos/50944/50944-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/50944/"
+      },
+      {
+        "slot": 5,
+        "file": "clip_05.mp4",
+        "mixkit_id": 825,
+        "title": "Open field horizon",
+        "source": "https://assets.mixkit.co/videos/825/825-1080.mp4",
+        "page": "https://mixkit.co/free-stock-video/825/"
+      }
+    ]
+  }
+}

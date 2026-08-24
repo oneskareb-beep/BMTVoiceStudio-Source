@@ -1,0 +1,342 @@
+{
+  "passed": 63,
+  "failed": 4,
+  "total": 67,
+  "checks": [
+    {
+      "name": "EN parse MFMFM",
+      "ok": true,
+      "detail": "5 segments"
+    },
+    {
+      "name": "EN seg 01 male",
+      "ok": true,
+      "detail": "voice=en-NG-AbeoNeural dur=16.73s size=100368"
+    },
+    {
+      "name": "EN seg 02 female",
+      "ok": true,
+      "detail": "voice=en-NG-EzinneNeural dur=13.06s size=78336"
+    },
+    {
+      "name": "EN seg 03 male",
+      "ok": true,
+      "detail": "voice=en-NG-AbeoNeural dur=16.15s size=96912"
+    },
+    {
+      "name": "EN seg 04 female",
+      "ok": true,
+      "detail": "voice=en-NG-EzinneNeural dur=12.98s size=77904"
+    },
+    {
+      "name": "EN seg 05 male",
+      "ok": true,
+      "detail": "voice=en-NG-AbeoNeural dur=11.11s size=66672"
+    },
+    {
+      "name": "EN final MP3",
+      "ok": true,
+      "detail": "dur=71.86s size=1150266"
+    },
+    {
+      "name": "EN final WAV",
+      "ok": true,
+      "detail": "dur=71.83s"
+    },
+    {
+      "name": "EN duration sanity",
+      "ok": true,
+      "detail": "final=71.86 segments+pauses\u224871.83"
+    },
+    {
+      "name": "EN production",
+      "ok": false,
+      "detail": "'charmap' codec can't encode character '\\u2248' in position 55: character maps to <undefined>\ners\\aganz\\Documents\\BMTVoiceStudio\\qa_v1_runner.py\", line 49, in record\n    print(f\"[{status}] {name}\" + (f\" \u2014 {detail}\" if detail else \"\"))\n  File \"C:\\Users\\aganz\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u2248' in position 55: character maps to <undefined>\n"
+    },
+    {
+      "name": "FR accents in source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "FR UTF-8 roundtrip",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "FR seg 01",
+      "ok": true,
+      "detail": "fr-FR-RemyMultilingualNeural 13.20s"
+    },
+    {
+      "name": "FR seg 02",
+      "ok": true,
+      "detail": "fr-FR-VivienneMultilingualNeural 9.65s"
+    },
+    {
+      "name": "FR seg 03",
+      "ok": true,
+      "detail": "fr-FR-RemyMultilingualNeural 12.31s"
+    },
+    {
+      "name": "FR seg 04",
+      "ok": true,
+      "detail": "fr-FR-VivienneMultilingualNeural 10.66s"
+    },
+    {
+      "name": "FR seg 05",
+      "ok": true,
+      "detail": "fr-FR-RemyMultilingualNeural 10.03s"
+    },
+    {
+      "name": "FR final MP3",
+      "ok": true,
+      "detail": "57.68s"
+    },
+    {
+      "name": "FR final WAV",
+      "ok": true,
+      "detail": "57.65s"
+    },
+    {
+      "name": "Hash changed for edited seg",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Regen mtime 3",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Reuse mtime 1",
+      "ok": true,
+      "detail": "old=1786489759.2760842 new=1786489759.2760842"
+    },
+    {
+      "name": "Reuse mtime 2",
+      "ok": true,
+      "detail": "old=1786489763.1056826 new=1786489763.1056826"
+    },
+    {
+      "name": "Reuse mtime 3",
+      "ok": false,
+      "detail": "old=1786489767.4687939 new=1786489802.0552132"
+    },
+    {
+      "name": "Reuse mtime 4",
+      "ok": true,
+      "detail": "old=1786489771.5276513 new=1786489771.5276513"
+    },
+    {
+      "name": "Reuse mtime 5",
+      "ok": true,
+      "detail": "old=1786489775.5411296 new=1786489775.5411296"
+    },
+    {
+      "name": "Only changed regenerated",
+      "ok": false,
+      "detail": "regen=[] reuse=[1, 2, 3, 4, 5]"
+    },
+    {
+      "name": "Rate change invalidates cache",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Pitch change invalidates cache",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Voice change invalidates cache",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Human-readable Edge error",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Piper health message",
+      "ok": true,
+      "detail": "MODEL NOT INSTALLED (piper binary missing)"
+    },
+    {
+      "name": "Auto piper fallback setting exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Piper fallback",
+      "ok": true,
+      "detail": "NOT INSTALLED / no models (MODEL NOT INSTALLED (piper binary missing))"
+    },
+    {
+      "name": "Models dir",
+      "ok": true,
+      "detail": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\models"
+    },
+    {
+      "name": "sw_CD in catalog",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Installed list callable",
+      "ok": true,
+      "detail": "count=0"
+    },
+    {
+      "name": "Piper assignment persist",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Mastering pipeline",
+      "ok": false,
+      "detail": "dur=0.00"
+    },
+    {
+      "name": "A/B original exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A/B processed exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Default target LUFS ~-16",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Local M3U parse",
+      "ok": true,
+      "detail": "items=10"
+    },
+    {
+      "name": "10-item merge",
+      "ok": true,
+      "detail": "dur=383.74s size=6140281 bitrate~128k"
+    },
+    {
+      "name": "Paste URL list",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Reject HTML as MP3",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "HTTP error handling",
+      "ok": true,
+      "detail": "Download failed for item 01 (HTTP 404)."
+    },
+    {
+      "name": "Simple M3U not HLS",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "HLS media detected",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "HLS master detected",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Broken HLS clear error",
+      "ok": true,
+      "detail": "FFmpegError"
+    },
+    {
+      "name": "Project restore fields",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Recent projects",
+      "ok": true,
+      "detail": "n=7"
+    },
+    {
+      "name": "Save As wrote file",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Sanitize invalid chars",
+      "ok": true,
+      "detail": "BMT_________ Devotional"
+    },
+    {
+      "name": "No silent overwrite",
+      "ok": true,
+      "detail": "final_test_2.mp3"
+    },
+    {
+      "name": "Large script 20+ segments",
+      "ok": true,
+      "detail": "n=24"
+    },
+    {
+      "name": "Generate disables button",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Cancel wired",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Settings persistence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Health internet",
+      "ok": true,
+      "detail": "OFFLINE"
+    },
+    {
+      "name": "Health ffmpeg",
+      "ok": true,
+      "detail": "READY (ffmpeg version 7.1-essentials_build-www.gyan.dev Copyright (c) 2000-2024 the FFmpeg developers)"
+    },
+    {
+      "name": "Health edge",
+      "ok": true,
+      "detail": "AVAILABLE"
+    },
+    {
+      "name": "Health piper",
+      "ok": true,
+      "detail": "MODEL NOT INSTALLED (piper binary missing)"
+    },
+    {
+      "name": "Health no user content",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "App log exists or creatable",
+      "ok": true,
+      "detail": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\logs"
+    },
+    {
+      "name": "Log has no obvious secrets",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

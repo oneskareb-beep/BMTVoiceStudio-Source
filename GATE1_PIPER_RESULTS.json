@@ -1,0 +1,107 @@
+{
+  "gate": "piper_offline",
+  "checks": [
+    {
+      "name": "piper_binary",
+      "ok": true,
+      "detail": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\models\\piper_bin\\piper.exe"
+    },
+    {
+      "name": "download_ok",
+      "ok": true,
+      "detail": "en_US-lessac-medium"
+    },
+    {
+      "name": "stored_under_models",
+      "ok": true,
+      "detail": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\models\\voices\\en_US-lessac-medium"
+    },
+    {
+      "name": "onnx_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "json_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "metadata_detected",
+      "ok": true,
+      "detail": "{\n  \"id\": \"en_US-lessac-medium\",\n  \"name\": \"Lessac (US English, Medium)\",\n  \"locale\": \"en_US\",\n  \"language\": \"en\",\n  \"gender\": \"female\",\n  \"quality\": \"medium\",\n  \"sample_rate\": 22050,\n  \"license\": \"MI"
+    },
+    {
+      "name": "model_card",
+      "ok": true,
+      "detail": "# Model card for lessac (medium)  * Language: en_US (English, United States) * Speakers: 1 * Quality: medium * Samplerat"
+    },
+    {
+      "name": "installed_list",
+      "ok": true,
+      "detail": "['en_US-lessac-medium']"
+    },
+    {
+      "name": "assign_fallback_voices",
+      "ok": true,
+      "detail": "male=en_US-lessac-medium female=en_US-lessac-medium"
+    },
+    {
+      "name": "preview",
+      "ok": true,
+      "detail": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\temp\\gate1_piper_preview.wav"
+    },
+    {
+      "name": "preview_duration",
+      "ok": true,
+      "detail": "2.52s"
+    },
+    {
+      "name": "piper_generate",
+      "ok": true,
+      "detail": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\temp\\gate1_piper_paragraph.mp3"
+    },
+    {
+      "name": "piper_provider_tag",
+      "ok": true,
+      "detail": "piper"
+    },
+    {
+      "name": "edge_not_called_when_piper_selected",
+      "ok": true,
+      "detail": "edge_calls=0"
+    },
+    {
+      "name": "piper_audio_valid",
+      "ok": true,
+      "detail": "dur=5.77s size=92830"
+    },
+    {
+      "name": "edge_simulated_fail",
+      "ok": true,
+      "detail": "Could not connect to Edge TTS. Your internet connection may be unavailable."
+    },
+    {
+      "name": "auto_fallback_piper_success",
+      "ok": true,
+      "detail": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\temp\\gate1_auto_fallback.mp3"
+    },
+    {
+      "name": "auto_fallback_audio",
+      "ok": true,
+      "detail": "dur=3.58s"
+    },
+    {
+      "name": "return_to_edge",
+      "ok": true,
+      "detail": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\temp\\gate1_back_to_edge.mp3"
+    }
+  ],
+  "piper_model": "en_US-lessac-medium",
+  "audio_output": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\temp\\gate1_piper_paragraph.mp3",
+  "duration_sec": 5.77,
+  "auto_fallback_output": "C:\\Users\\aganz\\AppData\\Local\\BMTVoiceStudio\\temp\\gate1_auto_fallback.mp3",
+  "auto_fallback_duration": 3.58,
+  "passed": 19,
+  "failed": 0
+}

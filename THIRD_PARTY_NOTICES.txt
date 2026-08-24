@@ -1,0 +1,84 @@
+BMT Voice Studio — Third Party Notices
+======================================
+
+This application bundles or downloads components under their respective licenses.
+Offline Piper voice models are NOT shipped inside the installer/EXE by default.
+They are downloaded only when the user explicitly requests them, and each model's
+MODEL_CARD / license text is preserved and displayed in Voice Manager.
+
+------------------------------------------------------------------------------
+Python
+------------------------------------------------------------------------------
+Python Software Foundation License
+https://docs.python.org/3/license.html
+
+------------------------------------------------------------------------------
+PySide6 / Qt
+------------------------------------------------------------------------------
+Qt for Python (PySide6) is available under the LGPL v3 / GPL v3 / commercial terms.
+https://www.qt.io/licensing/
+
+------------------------------------------------------------------------------
+edge-tts
+------------------------------------------------------------------------------
+Uses Microsoft Edge online Read Aloud / TTS endpoints via the edge-tts library.
+Library license: typically GPL-3.0 (verify installed package metadata).
+Speech synthesis traffic is sent only when the user starts generation with the
+Edge provider selected.
+
+------------------------------------------------------------------------------
+httpx / httpcore / anyio / certifi / idna / sniffio
+------------------------------------------------------------------------------
+BSD / MIT / MPL-2.0 (certifi) — see package metadata.
+
+------------------------------------------------------------------------------
+imageio-ffmpeg
+------------------------------------------------------------------------------
+Provides a local FFmpeg binary helper. FFmpeg itself is LGPL/GPL depending on build.
+https://ffmpeg.org/legal.html
+
+------------------------------------------------------------------------------
+FFmpeg
+------------------------------------------------------------------------------
+This application shells out to FFmpeg for decoding, joining, loudness normalization,
+and format conversion. Use a build that matches your distribution requirements.
+
+------------------------------------------------------------------------------
+mutagen
+------------------------------------------------------------------------------
+GNU GPL v2 or later — audio metadata library.
+
+------------------------------------------------------------------------------
+Piper TTS + piper-voices (Rhasspy)
+------------------------------------------------------------------------------
+Piper engine and voice models are separate downloads.
+Voice models on Hugging Face (rhasspy/piper-voices) carry their own MODEL_CARD
+and license terms. Do not assume all voices share one license.
+Always review MODEL_CARD before production redistribution of a downloaded model.
+
+------------------------------------------------------------------------------
+PyInstaller
+------------------------------------------------------------------------------
+Used only for packaging. Runtime of a built app includes PyInstaller bootloader
+notices as applicable.
+
+------------------------------------------------------------------------------
+Microsoft Edge neural voices (service)
+------------------------------------------------------------------------------
+Online synthesis uses Microsoft's public Edge TTS capability through edge-tts.
+Availability, voice catalog, and acceptable use are controlled by Microsoft.
+No Microsoft trademark license is granted by this notice.
+
+------------------------------------------------------------------------------
+Mixkit stock video (bundled default clips)
+------------------------------------------------------------------------------
+Default Video Maker background clips are sourced from Mixkit (mixkit.co) under
+the Mixkit Free License: free for commercial and personal use.
+https://mixkit.co/license/
+Attribution is appreciated but not required. See bundled ATTRIBUTION.json.
+
+------------------------------------------------------------------------------
+Believers Manna Today / BMT Voice Studio
+------------------------------------------------------------------------------
+Application code © Believers Manna Today contributors.
+No analytics, telemetry, ads, registration, or cloud account required.
