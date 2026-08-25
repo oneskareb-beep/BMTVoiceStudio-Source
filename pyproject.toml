@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bmt-voice-studio"
-version = "1.3.36"
+version = "1.3.37"
 description = "BMT Voice Studio — Neural TTS, Audio Builder, Video Maker"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -30,7 +30,15 @@ bmt-voice-studio = "bmt_voice_studio.app:main"
 include = ["bmt_voice_studio*"]
 
 [tool.setuptools.package-data]
-bmt_voice_studio = ["resources/*.png", "resources/flags/*.png", "resources/default_media/**/*.mp4", "config/*.json"]
+bmt_voice_studio = [
+  "resources/*.png",
+  "resources/*.ico",
+  "resources/flags/*.png",
+  "resources/default_media/**/*",
+  "resources/meditation_paysage/**/*",
+  "resources/music/**/*",
+  "config/*.json",
+]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

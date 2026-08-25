@@ -87,16 +87,14 @@ from bmt_voice_studio.video.geometry import ZOOM_MAX, ZOOM_MIN, clamp_crop, clam
 from bmt_voice_studio.video.history import load_video_history, upsert_video_entry
 from bmt_voice_studio.video.image_io import pad_rgb_for_template, suggest_smart_frame, zoom_toward_point
 from bmt_voice_studio.video.live_crop import click_offset_to_crop, drag_delta_to_crop, render_live_crop_still
-from bmt_voice_studio.video.media_probe import probe_audio_duration, probe_media
+from bmt_voice_studio.video.media_probe import probe_audio_duration
 from bmt_voice_studio.video.models import (
     LANGUAGE_LABELS,
     PROFILE_STANDARD,
     PROFILE_WHATSAPP,
     QUEUE_COMPLETE,
-    QUEUE_FAILED,
     QUEUE_PREPARING,
     QUEUE_RENDERING,
-    QUEUE_WAITING,
     TEMPLATE_BMT_CLASSIC,
     TEMPLATE_BMT_MINIMAL,
     TEMPLATE_BMT_NATURE,

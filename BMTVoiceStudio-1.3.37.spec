@@ -1,5 +1,5 @@
-# -*- mode: python ; coding: utf-8 -*-
-"""PyInstaller one-folder spec — keep in sync with the versioned BMTVoiceStudio-<VERSION>.spec."""
+﻿# -*- mode: python ; coding: utf-8 -*-
+"""PyInstaller FINAL onedir for BMT Voice Studio 1.3.37. Never writes over 1.3.22."""
 
 from PyInstaller.building.api import COLLECT, EXE, PYZ
 from PyInstaller.building.build_main import Analysis
@@ -144,5 +144,5 @@ coll = COLLECT(
     strip=False,
     upx=False,
     upx_exclude=[],
-    name="BMTVoiceStudio",
+    name="BMTVoiceStudio-1.3.37",
 )

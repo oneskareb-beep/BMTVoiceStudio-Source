@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from bmt_voice_studio.config.french_tts import remap_french_preset
-from bmt_voice_studio.config.pipeline_config import PipelineSettings, get_preset_pipeline
+from bmt_voice_studio.config.pipeline_config import PipelineSettings
 
 _CONFIG_PATH = Path(__file__).with_name("source_pipeline_presets.json")
 

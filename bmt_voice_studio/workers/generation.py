@@ -355,13 +355,13 @@ class HealthController:
 
             # FFmpeg
             ok, msg = FFmpegService().health_check()
-            status["ffmpeg"] = msg if ok else msg
+            status["ffmpeg"] = msg
 
             # Edge
             try:
                 edge = get_provider("edge")
                 ok, msg = await edge.health_check()
-                status["edge"] = "AVAILABLE" if ok else f"UNAVAILABLE"
+                status["edge"] = msg if msg else ("AVAILABLE" if ok else "UNAVAILABLE")
             except Exception:
                 status["edge"] = "UNAVAILABLE"
 

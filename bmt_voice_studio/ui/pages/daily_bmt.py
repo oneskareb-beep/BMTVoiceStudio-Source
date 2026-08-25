@@ -86,7 +86,6 @@ class DailyBMTPage(QWidget):
         self._relayout_panels()
         self._refresh_validation()
         self._load_history()
-        import os
 
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen" and os.environ.get("BMT_SKIP_RECOVERY") != "1":
             QTimer.singleShot(400, self._maybe_recover)

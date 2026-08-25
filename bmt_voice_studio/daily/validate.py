@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from bmt_voice_studio.core.models import Speaker
-from bmt_voice_studio.core.parser import parse_speaker_script, parse_speaker_script_source
+from bmt_voice_studio.core.parser import parse_speaker_script_source
 
 
 @dataclass

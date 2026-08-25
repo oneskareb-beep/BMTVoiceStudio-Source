@@ -7,7 +7,7 @@ from pathlib import Path
 
 from bmt_voice_studio.audio.ffmpeg_service import FFmpegError, FFmpegService
 from bmt_voice_studio.core.filenames import unique_path
-from bmt_voice_studio.core.models import Segment, Speaker
+from bmt_voice_studio.core.models import Segment
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,6 @@ def join_segments(
 
     # Normalize each input to consistent PCM-compatible mp3 first
     normalized: list[Path] = []
-    prev_speaker: Speaker | None = None
     for i, seg in enumerate(enabled):
         src = Path(seg.audio_path)
         norm = work / f"norm_{i:03d}.mp3"
@@ -48,7 +47,6 @@ def join_segments(
             # Always insert pause between sections for clearer devotionals
             normalized.append(silence_path)
         normalized.append(norm)
-        prev_speaker = seg.speaker
 
     list_file = work / "concat.txt"
     lines = []
