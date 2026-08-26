@@ -98,6 +98,7 @@ from bmt_voice_studio.video.models import (
     TEMPLATE_BMT_CLASSIC,
     TEMPLATE_BMT_MINIMAL,
     TEMPLATE_BMT_NATURE,
+    TEMPLATE_HHR_GREEN,
     TEMPLATE_LABELS,
     BrandingToggles,
     FitMode,
@@ -827,10 +828,48 @@ class VideoMakerPage(QWidget):
 
     def _logo_path(self) -> str:
         settings = get_settings()
-        if settings.video_logo_path and Path(settings.video_logo_path).is_file():
-            return settings.video_logo_path
-        packaged = packaged_logo_path()
+        product = getattr(settings, "product_mode", "bmt") or "bmt"
+        packaged = packaged_logo_path(product)
+        other = packaged_logo_path("hhr" if product == "bmt" else "bmt")
+        chosen = settings.video_logo_path
+        if chosen and Path(chosen).is_file():
+            if other and Path(chosen).resolve() == Path(str(other)).resolve():
+                return str(packaged) if packaged else chosen
+            return chosen
         return str(packaged) if packaged else ""
+
+    def apply_product_mode(self, product: str) -> None:
+        from bmt_voice_studio.config.product import get_product, is_hhr
+
+        profile = get_product(product)
+        hhr = is_hhr(product)
+        for btn in (self.btn_classic, self.btn_nature, getattr(self, "btn_minimal", None)):
+            if btn is not None:
+                btn.setEnabled(not hhr)
+        if hhr:
+            self._set_template(profile.template_id, persist=False)
+            idx = self.cmb_language.findData("sw")
+            if idx >= 0:
+                self._suppress = True
+                self.cmb_language.setCurrentIndex(idx)
+                self._suppress = False
+            self.chk_captions.setChecked(True)
+            self.chk_logo.setChecked(True)
+            self.use_todays_audio("sw")
+        elif getattr(self, "_template_id", "") == TEMPLATE_HHR_GREEN:
+            self._set_template(TEMPLATE_BMT_CLASSIC, persist=False)
+        self._refresh_header()
+        self._on_changed()
+
+    def _hhr_kinyarwanda_text(self) -> str:
+        page = getattr(self, "_daily_page", None)
+        edit = getattr(page, "rw_edit", None) if page is not None else None
+        return edit.toPlainText() if edit is not None else ""
+
+    def _hhr_english_caption_text(self) -> str:
+        page = getattr(self, "_daily_page", None)
+        edit = getattr(page, "en_caption_edit", None) if page is not None else None
+        return edit.toPlainText() if edit is not None else ""
 
     def collect_project(self) -> VideoProject:
         audio = self._selected_audio_path()
@@ -889,6 +928,9 @@ class VideoMakerPage(QWidget):
             music_path=str(self.music_picker.music_path() or getattr(self, "_music_path", "") or ""),
             music_intro_start=float(self.music_picker.intro_start()),
             music_outro_start=float(self.music_picker.outro_start()),
+            product_mode=str(getattr(get_settings(), "product_mode", "bmt") or "bmt"),
+            kinyarwanda_text=self._hhr_kinyarwanda_text(),
+            english_caption_text=self._hhr_english_caption_text(),
             branding=BrandingToggles(
                 logo=self.chk_logo.isChecked(),
                 date=self.chk_date.isChecked(),
@@ -1245,6 +1287,10 @@ class VideoMakerPage(QWidget):
         self._on_changed()
 
     def _set_template(self, template_id: str, persist: bool = True) -> None:
+        from bmt_voice_studio.config.product import is_hhr
+
+        if is_hhr(getattr(get_settings(), "product_mode", "bmt")):
+            template_id = TEMPLATE_HHR_GREEN
         tid = template_id if template_id in TEMPLATE_LABELS else TEMPLATE_BMT_CLASSIC
         previous = getattr(self, "_template_id", TEMPLATE_BMT_CLASSIC)
         self._template_id = tid
@@ -1300,7 +1346,7 @@ class VideoMakerPage(QWidget):
         settings = get_settings()
         settings.video_logo_path = ""
         save_settings(settings)
-        packaged = packaged_logo_path()
+        packaged = packaged_logo_path(getattr(get_settings(), "product_mode", "bmt"))
         self.logo_picker.set_logo_path(str(packaged) if packaged else "")
         self._on_changed()
 

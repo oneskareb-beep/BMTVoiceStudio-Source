@@ -40,10 +40,12 @@ class SceneKind(str, Enum):
 TEMPLATE_BMT_CLASSIC = "bmt_classic"
 TEMPLATE_BMT_NATURE = "bmt_nature"
 TEMPLATE_BMT_MINIMAL = "bmt_minimal"
+TEMPLATE_HHR_GREEN = "hhr_green"
 TEMPLATE_LABELS = {
     TEMPLATE_BMT_CLASSIC: "BMT CLASSIC",
     TEMPLATE_BMT_NATURE: "BMT NATURE",
     TEMPLATE_BMT_MINIMAL: "BMT MINIMAL",
+    TEMPLATE_HHR_GREEN: "HHR GREEN",
 }
 
 PROFILE_STANDARD = "standard_1080p"
@@ -453,6 +455,9 @@ class VideoProject:
     render_speed: str = "standard"
     preview_start: float = 0.0
     preview_duration: float = PREVIEW_DURATION
+    product_mode: str = "bmt"
+    kinyarwanda_text: str = ""
+    english_caption_text: str = ""
 
     def ordered_media(self) -> list[MediaItem]:
         return sorted(self.media_items, key=lambda m: m.order)
@@ -548,6 +553,9 @@ class VideoProject:
             "render_speed": self.render_speed or "standard",
             "preview_start": float(self.preview_start or 0.0),
             "preview_duration": float(self.preview_duration or PREVIEW_DURATION),
+            "product_mode": self.product_mode or "bmt",
+            "kinyarwanda_text": self.kinyarwanda_text or "",
+            "english_caption_text": self.english_caption_text or "",
         }
 
     @classmethod
@@ -618,6 +626,9 @@ class VideoProject:
             render_speed=str(data.get("render_speed") or "standard"),
             preview_start=float(data.get("preview_start") or 0.0),
             preview_duration=float(data.get("preview_duration") or PREVIEW_DURATION),
+            product_mode=str(data.get("product_mode") or "bmt"),
+            kinyarwanda_text=str(data.get("kinyarwanda_text") or ""),
+            english_caption_text=str(data.get("english_caption_text") or ""),
         )
         project.ensure_tracks()
         if project.branding.captions:

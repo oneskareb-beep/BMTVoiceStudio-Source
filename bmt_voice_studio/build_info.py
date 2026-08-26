@@ -11,7 +11,7 @@ from bmt_voice_studio import __version__
 
 # Stamped by tools/stamp_build.py immediately before packaging.
 BUILD_LABEL = "Final"
-BUILD_TIMESTAMP = "2026-08-25T10:55:13Z"
+BUILD_TIMESTAMP = "2026-08-26T13:21:51Z"
 BUILD_ID = f"{__version__} — {BUILD_LABEL}"
 
 

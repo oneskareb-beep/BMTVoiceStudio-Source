@@ -35,10 +35,10 @@ def qapp():
 
 
 def test_final_identity():
-    assert __version__ == "1.3.37"
+    assert __version__ == "1.3.38"
     assert BUILD_LABEL == "Final"
     root = Path(__file__).resolve().parents[1]
-    assert (root / "VERSION").read_text(encoding="utf-8").strip() == "1.3.37"
+    assert (root / "VERSION").read_text(encoding="utf-8").strip() == "1.3.38"
 
 
 def test_stable_130_final_protected():

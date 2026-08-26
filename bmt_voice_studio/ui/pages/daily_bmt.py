@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QTextEdit,
+    QPlainTextEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -106,6 +107,8 @@ class DailyBMTPage(QWidget):
         title.setObjectName("pageTitle")
         subtitle = QLabel("Date and languages, then the scripts — Generate when ready")
         subtitle.setObjectName("appSubtitle")
+        self.lbl_page_title = title
+        self.lbl_page_subtitle = subtitle
         titles.addWidget(title)
         titles.addWidget(subtitle)
         header.addLayout(titles, 1)
@@ -144,6 +147,7 @@ class DailyBMTPage(QWidget):
         root.addWidget(date_card)
 
         selector_card, selector_layout = card("B. Languages to Generate", "")
+        self.selector_card = selector_card
         self.language_selector = LanguageSelector()
         saved_ids = getattr(get_settings(), "daily_selected_languages", None)
         self.language_selector.set_selected_ids(
@@ -153,6 +157,7 @@ class DailyBMTPage(QWidget):
         root.addWidget(selector_card)
 
         root.addWidget(self._make_script_area())
+        root.addWidget(self._make_hhr_transcript_area())
 
         ready_configs = [
             cfg for cfg in selectable_daily_languages() if cfg.production_approved
@@ -369,12 +374,62 @@ class DailyBMTPage(QWidget):
         self.pt_box = self.pt_panel
         return host
 
+    def _make_hhr_transcript_area(self) -> QWidget:
+        host = QWidget()
+        self.hhr_transcript_host = host
+        lay = QHBoxLayout(host)
+        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setSpacing(16)
+        rw_card, rw_lay = card("Kinyarwanda transcript", "On-screen text — large")
+        self.rw_edit = QPlainTextEdit()
+        self.rw_edit.setPlaceholderText(
+            "Paste the KINYARWANDA transcript for the Swahili audio. This is the large subtitle."
+        )
+        self.rw_edit.setMinimumHeight(220)
+        rw_lay.addWidget(self.rw_edit)
+        en_card, en_lay = card("English captions", "On-screen text — medium")
+        self.en_caption_edit = QPlainTextEdit()
+        self.en_caption_edit.setPlaceholderText(
+            "Paste the ENGLISH captions (medium size) shown under the Kinyarwanda text."
+        )
+        self.en_caption_edit.setMinimumHeight(220)
+        en_lay.addWidget(self.en_caption_edit)
+        lay.addWidget(rw_card, 1)
+        lay.addWidget(en_card, 1)
+        host.hide()
+        return host
+
+    def apply_product_mode(self, product: str) -> None:
+        from bmt_voice_studio.config.product import get_product, is_hhr
+
+        profile = get_product(product)
+        self.lbl_page_title.setText("Today's chaplaincy audio" if is_hhr(product) else "Today's audio")
+        self.lbl_page_subtitle.setText(profile.audio_subtitle)
+        self.btn_generate.setText(profile.generate_label)
+        if is_hhr(product):
+            self.language_selector.set_hint("HHR starts with Swahili voice. Keep Swahili selected.")
+            self.language_selector.set_allowed_ids(["sw"])
+            self.language_selector.set_selected_ids(["sw"], fallback=["sw"])
+            self.hhr_transcript_host.show()
+        else:
+            self.language_selector.set_hint("Select one or more languages for today's devotional.")
+            self.language_selector.set_allowed_ids(None)
+            saved = getattr(get_settings(), "daily_selected_languages", None)
+            self.language_selector.set_selected_ids(
+                normalize_selected_language_ids(saved or default_selected_language_ids())
+            )
+            self.hhr_transcript_host.hide()
+        self._relayout_panels()
+        self._refresh_validation()
+
     def _wire(self) -> None:
         self.date.dateChanged.connect(self._on_date)
         self.language_selector.selection_changed.connect(self._on_selection_changed)
         for panel in self.lang_panels.values():
             panel.text_changed.connect(self._on_text)
             panel.validate_requested.connect(self._refresh_validation)
+        self.rw_edit.textChanged.connect(self._on_text)
+        self.en_caption_edit.textChanged.connect(self._on_text)
         self.btn_generate.clicked.connect(self.generate)
         self.btn_cancel.clicked.connect(self._cancel)
         self.btn_toggle_details.clicked.connect(self._toggle_details)
@@ -411,13 +466,25 @@ class DailyBMTPage(QWidget):
         return freeze_devotional_date(self.date.date())
 
     def _selected_ids(self) -> list[str]:
+        from bmt_voice_studio.config.product import is_hhr
+
+        if is_hhr(getattr(get_settings(), "product_mode", "bmt")):
+            return normalize_selected_language_ids(
+                self.language_selector.selected_ids(), fallback=["sw"]
+            )
         return normalize_selected_language_ids(self.language_selector.selected_ids())
 
     def _on_selection_changed(self, selected_ids: list[str]) -> None:
-        selected = normalize_selected_language_ids(selected_ids)
-        settings = get_settings()
-        settings.daily_selected_languages = selected
-        save_settings(settings)
+        from bmt_voice_studio.config.product import is_hhr
+
+        selected = normalize_selected_language_ids(
+            selected_ids,
+            fallback=["sw"] if is_hhr(getattr(get_settings(), "product_mode", "bmt")) else None,
+        )
+        if not is_hhr(getattr(get_settings(), "product_mode", "bmt")):
+            settings = get_settings()
+            settings.daily_selected_languages = selected
+            save_settings(settings)
         self._relayout_panels()
         self._reset_unselected_states()
         self._refresh_validation()
@@ -593,6 +660,9 @@ class DailyBMTPage(QWidget):
             use_piper_fallback=False,
             processing_mode="original",
             strict_source_mode=True,
+            product_mode=getattr(get_settings(), "product_mode", "bmt") or "bmt",
+            kinyarwanda_text=self.rw_edit.toPlainText(),
+            english_caption_text=self.en_caption_edit.toPlainText(),
         )
 
     def _open_voice_setup(self, language_id: str | None = None) -> None:
@@ -619,6 +689,16 @@ class DailyBMTPage(QWidget):
                 message = f"{name} SCRIPT INVALID"
                 show_error(self, message, self._friendly_error(message))
                 return
+            from bmt_voice_studio.config.product import is_hhr
+
+            if is_hhr(getattr(get_settings(), "product_mode", "bmt")) and language_id == "sw":
+                if not self.rw_edit.toPlainText().strip():
+                    show_error(
+                        self,
+                        "KINYARWANDA TRANSCRIPT REQUIRED",
+                        "HHR videos need a Kinyarwanda transcript for the large on-screen text.",
+                    )
+                    return
             if cfg is not None and not cfg.production_approved:
                 box = QMessageBox(self)
                 box.setIcon(QMessageBox.Icon.Warning)
@@ -974,6 +1054,9 @@ class DailyBMTPage(QWidget):
                 "generate_swahili": "sw" in selected,
                 "generate_portuguese": "pt" in selected,
                 "pause_ms": BMT_ENGLISH.pipeline.pause_ms,
+                "product_mode": getattr(get_settings(), "product_mode", "bmt") or "bmt",
+                "kinyarwanda_text": self.rw_edit.toPlainText(),
+                "english_caption_text": self.en_caption_edit.toPlainText(),
             }
         )
 
@@ -1029,6 +1112,8 @@ class DailyBMTPage(QWidget):
         self.fr_edit.setPlainText(draft.get("french_text") or "")
         self.sw_edit.setPlainText(draft.get("swahili_text") or "")
         self.pt_edit.setPlainText(draft.get("portuguese_text") or "")
+        self.rw_edit.setPlainText(draft.get("kinyarwanda_text") or "")
+        self.en_caption_edit.setPlainText(draft.get("english_caption_text") or "")
         selected = normalize_selected_language_ids(
             draft.get("selected_languages") or default_selected_language_ids()
         )

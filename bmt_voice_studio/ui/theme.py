@@ -210,6 +210,12 @@ QWidget#workspaceSwitch {{
   border: 1px solid {c.border};
   border-radius: {r.medium}px;
 }}
+QLabel#appTagline {{
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  color: {c.text_muted};
+}}
 QLabel#appTitle {{
   font-size: 20px;
   font-weight: 700;

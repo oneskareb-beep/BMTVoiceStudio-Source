@@ -60,6 +60,7 @@ class AppSettings:
     custom_data_folder: str = ""
     data_library_choice_complete: bool = False
     update_feed_url: str = ""
+    product_mode: str = "bmt"
 
     def __post_init__(self) -> None:
         if not self.output_directory:

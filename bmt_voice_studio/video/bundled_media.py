@@ -11,6 +11,7 @@ from bmt_voice_studio.video.models import (
     TEMPLATE_BMT_CLASSIC,
     TEMPLATE_BMT_MINIMAL,
     TEMPLATE_BMT_NATURE,
+    TEMPLATE_HHR_GREEN,
     TEMPLATE_LABELS,
     MediaItem,
 )
@@ -46,8 +47,9 @@ def bundled_clip_path(template_id: str, slot: int) -> Path | None:
     tid = normalize_template_id(template_id)
     slot = max(1, min(BUNDLED_CLIP_COUNT, int(slot)))
     name = f"clip_{slot:02d}.mp4"
+    clip_tid = TEMPLATE_BMT_NATURE if tid == TEMPLATE_HHR_GREEN else tid
     for root in _resource_roots():
-        path = root / tid / name
+        path = root / clip_tid / name
         if path.is_file():
             return path
     return None

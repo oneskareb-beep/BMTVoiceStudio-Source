@@ -208,7 +208,11 @@ def default_selected_language_ids() -> list[str]:
     return ["en", "fr"]
 
 
-def normalize_selected_language_ids(ids: Iterable[str] | None) -> list[str]:
+def normalize_selected_language_ids(
+    ids: Iterable[str] | None,
+    *,
+    fallback: list[str] | None = None,
+) -> list[str]:
     allowed = {cfg.language_id for cfg in selectable_daily_languages()}
     order = [cfg.language_id for cfg in selectable_daily_languages()]
     chosen = []
@@ -217,7 +221,7 @@ def normalize_selected_language_ids(ids: Iterable[str] | None) -> list[str]:
         if lid in allowed and lid not in chosen:
             chosen.append(lid)
     if not chosen:
-        return default_selected_language_ids()
+        return list(fallback or default_selected_language_ids())
     return [lid for lid in order if lid in chosen]
 
 

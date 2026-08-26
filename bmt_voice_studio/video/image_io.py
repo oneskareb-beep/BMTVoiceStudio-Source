@@ -163,6 +163,8 @@ def pad_rgb_for_template(template_id: str | None) -> tuple[int, int, int]:
     raw = str(template_id or "").lower()
     if raw == "bmt_nature":
         return (14, 28, 22)
+    if raw == "hhr_green":
+        return (46, 90, 72)
     if raw == "bmt_minimal":
         return (8, 10, 14)
     return DEFAULT_PAD_RGB

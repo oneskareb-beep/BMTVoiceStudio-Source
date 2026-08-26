@@ -76,6 +76,9 @@ class DailyJob:
     base_exports: Path | None = None
     processing_mode: ProcessingMode = "original"
     strict_source_mode: bool = True
+    product_mode: str = "bmt"
+    kinyarwanda_text: str = ""
+    english_caption_text: str = ""
 
     def selected_language_ids(self) -> list[str]:
         ids: list[str] = []
@@ -141,6 +144,11 @@ def preflight(job: DailyJob) -> list[str]:
                 issues.append(f"{label} SCRIPT REQUIRED")
             else:
                 issues.append(f"{label} SCRIPT INVALID: " + (v.errors[0] if v.errors else "invalid"))
+
+    from bmt_voice_studio.config.product import is_hhr
+
+    if is_hhr(job.product_mode) and job.generate_swahili and not (job.kinyarwanda_text or "").strip():
+        issues.append("KINYARWANDA TRANSCRIPT REQUIRED")
 
     try:
         ok, msg = FFmpegService().health_check()
@@ -783,18 +791,23 @@ def _embed_locked_mp3_artwork(mp3_path: Path, job: DailyJob, language: str) -> N
         # audio untouched and let Video Maker surface the validation error.
         if not topic:
             return
+        from bmt_voice_studio.config.product import get_product
+
+        profile = get_product(job.product_mode)
         project = VideoProject(
             topic=topic,
             title=meta.get("title") or topic,
             devotional_date=job.date.isoformat(),
             language=language_id,
+            product_mode=job.product_mode or "bmt",
         )
         jpeg = locked_card_jpeg_bytes(project)
         embed_locked_artwork(
             mp3_path,
             jpeg,
-            title=meta.get("topic") or "Believers Manna Today",
+            title=meta.get("topic") or profile.tagline,
             date_label=display_date(job.date),
+            product=job.product_mode,
         )
     except Exception:
         return
@@ -821,6 +834,8 @@ async def run_daily_job(
                 job.french_text or "",
                 job.swahili_text or "",
                 job.portuguese_text or "",
+                job.kinyarwanda_text or "",
+                job.english_caption_text or "",
             ]
         )
     )
@@ -831,6 +846,9 @@ async def run_daily_job(
     (root / "SOURCE" / "french_source.txt").write_text(job.french_text or "", encoding="utf-8")
     (root / "SOURCE" / "swahili_source.txt").write_text(job.swahili_text or "", encoding="utf-8")
     (root / "SOURCE" / "portuguese_source.txt").write_text(job.portuguese_text or "", encoding="utf-8")
+    (root / "SOURCE" / "kinyarwanda_transcript.txt").write_text(job.kinyarwanda_text or "", encoding="utf-8")
+    (root / "SOURCE" / "english_captions.txt").write_text(job.english_caption_text or "", encoding="utf-8")
+    (root / "SOURCE" / "product_mode.txt").write_text((job.product_mode or "bmt").strip().lower(), encoding="utf-8")
 
     # Original Pipeline / BMT reference: force Edge TTS — never switch job.provider to Piper.
     job.provider = "edge" if (

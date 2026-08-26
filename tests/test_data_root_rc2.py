@@ -67,10 +67,10 @@ def _populate_library(root: Path, *, stamp: str = "EN") -> Path:
 
 
 def test_rc2_identity():
-    """Stable 1.3.0 FINAL artifacts remain; runtime identity is 1.3.37 FINAL."""
+    """Stable 1.3.0 FINAL artifacts remain; runtime identity is 1.3.38 FINAL."""
     root = Path(__file__).resolve().parents[1]
-    assert __version__ == "1.3.37"
-    assert (root / "VERSION").read_text(encoding="utf-8").strip() == "1.3.37"
+    assert __version__ == "1.3.38"
+    assert (root / "VERSION").read_text(encoding="utf-8").strip() == "1.3.38"
     assert BUILD_LABEL == "Final"
     about = (root / "bmt_voice_studio" / "ui" / "dialogs" / "about.py").read_text(encoding="utf-8")
     assert "BUILD_LABEL" in about
@@ -95,6 +95,7 @@ def test_rc2_identity():
     assert (root / "BMTVoiceStudio-1.3.33.spec").is_file()
     assert (root / "BMTVoiceStudio-1.3.36.spec").is_file()
     assert (root / "BMTVoiceStudio-1.3.37.spec").is_file()
+    assert (root / "BMTVoiceStudio-1.3.38.spec").is_file()
     zip12 = root / "release" / STABLE_12_ZIP_NAME
     if not zip12.is_file():
         pytest.skip("historical 1.2 release zip not present on this machine")

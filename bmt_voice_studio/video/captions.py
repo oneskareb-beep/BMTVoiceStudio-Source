@@ -519,6 +519,77 @@ def captions_for_language(
     )
 
 
+def _chunk_sentences(sentences: list[str], n: int) -> list[str]:
+    if n <= 0:
+        return []
+    if not sentences:
+        return [""] * n
+    if len(sentences) <= n:
+        out = list(sentences) + [""] * (n - len(sentences))
+        return out
+    groups: list[list[str]] = [[] for _ in range(n)]
+    for i, sentence in enumerate(sentences):
+        groups[min(n - 1, int(i * n / len(sentences)))].append(sentence)
+    return [" ".join(g).strip() for g in groups]
+
+
+def align_text_to_cues(text: str, timing: list[CaptionCue], language: str) -> list[CaptionCue]:
+    """Keep Swahili voice clocks; display another language's transcript on those clocks."""
+    blob = (text or "").strip()
+    if not blob or not timing:
+        return []
+    parts = _chunk_sentences(split_sentences(blob) or [blob], len(timing))
+    out: list[CaptionCue] = []
+    for cue, piece in zip(timing, parts, strict=False):
+        wrapped = _wrap_chunk(piece, MAX_CAPTION_CHARS, MAX_CAPTION_LINES) if piece else ""
+        if not wrapped:
+            continue
+        out.append(
+            CaptionCue(start=cue.start, end=cue.end, text=wrapped, language=language)
+        )
+    return out
+
+
+def load_hhr_transcripts(d: date | str, *, base: Path | None = None) -> tuple[str, str]:
+    from bmt_voice_studio.video.discovery import resolve_daily_project_dir
+
+    root = resolve_daily_project_dir(freeze_devotional_date(d), base=base)
+    rw_path = root / "SOURCE" / "kinyarwanda_transcript.txt"
+    en_path = root / "SOURCE" / "english_captions.txt"
+    rw = rw_path.read_text(encoding="utf-8") if rw_path.is_file() else ""
+    en = en_path.read_text(encoding="utf-8") if en_path.is_file() else ""
+    return rw, en
+
+
+def hhr_dual_captions(
+    d: date | str,
+    *,
+    audio_duration: float = 0.0,
+    base: Path | None = None,
+    kinyarwanda_text: str = "",
+    english_caption_text: str = "",
+    skip_header: bool = True,
+    caption_mode: str | None = None,
+) -> list[CaptionCue]:
+    timing = captions_for_language(
+        d,
+        "sw",
+        audio_duration=audio_duration,
+        base=base,
+        skip_header=skip_header,
+        caption_mode=caption_mode,
+    )
+    rw_text, en_text = load_hhr_transcripts(d, base=base)
+    rw_text = (kinyarwanda_text or rw_text or "").strip()
+    en_text = (english_caption_text or en_text or "").strip()
+    cues: list[CaptionCue] = []
+    cues.extend(align_text_to_cues(rw_text, timing, "rw"))
+    cues.extend(align_text_to_cues(en_text, timing, "en"))
+    if not cues and timing:
+        return timing
+    return cues
+
+
 def shift_caption_cues(cues: list[CaptionCue], offset: float) -> list[CaptionCue]:
     """Shift speech-relative cues onto the muxed video timeline (intro pad)."""
     delta = float(offset or 0.0)
@@ -615,12 +686,31 @@ def write_ass(
     margin_v = max(160, int(round(height * 0.10)))
     margin_lr = max(56, int(round(width * 0.08)))
     fontsize = max(18, int(round(text_style.font_size * max(1, int(width)) / 1080.0)))
+    langs = {(cue.language or "en").strip().lower() for cue in cues}
+    dual = "rw" in langs
     primary = hex_to_ass_color(text_style.text_color, default="#E89430")
     outline = hex_to_ass_color(text_style.stroke_color, default="#0A204A")
+    if dual:
+        primary = hex_to_ass_color("#F4F7F2", default="#F4F7F2")
+        outline = hex_to_ass_color("#0A2E22", default="#0A2E22")
     # ASS Outline paints heavier than Pillow stroke_width — keep modest but always visible.
     stroke = max(3, min(8, int(round(int(text_style.stroke_width) * 0.65))))
     border_style = 1
     outline_w = stroke
+    rw_size = max(fontsize + 10, int(round(fontsize * 1.18)))
+    en_size = max(18, int(round(fontsize * 0.72)))
+    en_margin = margin_v + max(88, int(round(rw_size * 2.1)))
+    styles = [
+        f"Style: Default,Arial,{fontsize},{primary},{primary},{outline},&HFF000000,"
+        f"0,0,0,0,100,100,0,0,{border_style},{outline_w},0,2,{margin_lr},{margin_lr},{margin_v},1"
+    ]
+    if dual:
+        styles = [
+            f"Style: Kinyarwanda,Arial,{rw_size},{primary},{primary},{outline},&HFF000000,"
+            f"1,0,0,0,100,100,0,0,{border_style},{outline_w},0,2,{margin_lr},{margin_lr},{margin_v},1",
+            f"Style: English,Arial,{en_size},{primary},{primary},{outline},&HFF000000,"
+            f"0,0,0,0,100,100,0,0,{border_style},{max(2, outline_w - 1)},0,2,{margin_lr},{margin_lr},{en_margin},1",
+        ]
     header = (
         "[Script Info]\n"
         "ScriptType: v4.00+\n"
@@ -633,8 +723,8 @@ def write_ass(
         "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, "
         "BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, "
         "BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n"
-        f"Style: Default,Arial,{fontsize},{primary},{primary},{outline},&HFF000000,"
-        f"0,0,0,0,100,100,0,0,{border_style},{outline_w},0,2,{margin_lr},{margin_lr},{margin_v},1\n"
+        + "\n".join(styles)
+        + "\n"
         "\n"
         "[Events]\n"
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n"
@@ -658,8 +748,12 @@ def write_ass(
                 rf"{{\move({anchor_x},{start_y},{anchor_x},{end_y},0,{duration_ms})"
                 rf"\fad(120,120)}}" + text
             )
+        if dual:
+            style_name = "Kinyarwanda" if (cue.language or "").lower() == "rw" else "English"
+        else:
+            style_name = "Default"
         lines.append(
-            f"Dialogue: 0,{_ass_timestamp(cue.start)},{_ass_timestamp(cue.end)},Default,,0,0,0,,{text}\n"
+            f"Dialogue: 0,{_ass_timestamp(cue.start)},{_ass_timestamp(cue.end)},{style_name},,0,0,0,,{text}\n"
         )
     dest.write_text("".join(lines), encoding="utf-8")
     return dest

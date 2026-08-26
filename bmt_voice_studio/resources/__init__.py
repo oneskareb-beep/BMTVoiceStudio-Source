@@ -49,8 +49,8 @@ def _resource_root_candidates() -> list[Path]:
     return roots
 
 
-def _resource_candidates() -> list[Path]:
-    return [root / "bbnet_logo.png" for root in _resource_root_candidates()]
+def _resource_candidates(filename: str = "bbnet_logo.png") -> list[Path]:
+    return [root / filename for root in _resource_root_candidates()]
 
 
 def _first_existing(filename: str) -> Path | None:
@@ -61,10 +61,14 @@ def _first_existing(filename: str) -> Path | None:
     return None
 
 
-def logo_path() -> Path | None:
-    for path in _resource_candidates():
-        if path.exists():
-            return path
+def logo_path(product: str | None = None) -> Path | None:
+    from bmt_voice_studio.config.product import HHR_LOGO_FILE, is_hhr
+
+    names = [HHR_LOGO_FILE, "bbnet_logo.png"] if is_hhr(product) else ["bbnet_logo.png"]
+    for name in names:
+        for path in _resource_candidates(name):
+            if path.exists():
+                return path
     return None
 
 
@@ -128,8 +132,12 @@ def flag_path(language_id: str) -> Path | None:
     return None
 
 
-def load_logo_pixmap(max_width: int | None = None, max_height: int | None = None) -> QPixmap | None:
-    path = logo_path()
+def load_logo_pixmap(
+    max_width: int | None = None,
+    max_height: int | None = None,
+    product: str | None = None,
+) -> QPixmap | None:
+    path = logo_path(product)
     if not path:
         return None
     pix = QPixmap(str(path))
@@ -222,22 +230,38 @@ def load_app_icon() -> QIcon:
     return icon
 
 
+def apply_logo_label(
+    label: QLabel,
+    *,
+    max_width: int = 180,
+    max_height: int = 120,
+    product: str | None = None,
+) -> None:
+    from bmt_voice_studio.config.product import get_product, is_hhr
+
+    pix = load_logo_pixmap(max_width=max_width, max_height=max_height, product=product)
+    if pix:
+        label.setPixmap(pix)
+        label.setText("")
+        profile = get_product(product)
+        label.setToolTip(f"{profile.title} — {profile.tagline}")
+        return
+    label.setPixmap(QPixmap())
+    label.setText("HHR" if is_hhr(product) else "BBNet")
+    label.setObjectName("appTitle")
+
+
 def logo_label(
     *,
     max_width: int = 180,
     max_height: int = 120,
     parent=None,
+    product: str | None = None,
 ) -> QLabel:
     label = QLabel(parent)
     label.setAlignment(Qt.AlignmentFlag.AlignCenter)
     label.setObjectName("brandLogo")
     label.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
     label.setStyleSheet("background: transparent; border: none;")
-    pix = load_logo_pixmap(max_width=max_width, max_height=max_height)
-    if pix:
-        label.setPixmap(pix)
-        label.setToolTip("BBNet — Believers Businessmen Network")
-    else:
-        label.setText("BBNet")
-        label.setObjectName("appTitle")
+    apply_logo_label(label, max_width=max_width, max_height=max_height, product=product)
     return label

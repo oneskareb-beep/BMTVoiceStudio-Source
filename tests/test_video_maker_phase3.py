@@ -395,7 +395,7 @@ def test_bmt_minimal_template(tmp_path: Path):
     from bmt_voice_studio.video.title_cards import palette_for, render_intro_card, wrap_and_shrink
 
     assert TEMPLATE_BMT_MINIMAL in TEMPLATE_LABELS
-    assert set(TEMPLATE_LABELS) == {TEMPLATE_BMT_CLASSIC, TEMPLATE_BMT_NATURE, TEMPLATE_BMT_MINIMAL}
+    assert {TEMPLATE_BMT_CLASSIC, TEMPLATE_BMT_NATURE, TEMPLATE_BMT_MINIMAL}.issubset(TEMPLATE_LABELS)
     pal = palette_for(TEMPLATE_BMT_MINIMAL)
     assert pal["bg"] != palette_for(TEMPLATE_BMT_CLASSIC)["bg"]
     assert pal["bg"] != palette_for(TEMPLATE_BMT_NATURE)["bg"]

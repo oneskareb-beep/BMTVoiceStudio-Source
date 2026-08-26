@@ -75,5 +75,5 @@ def clear_incomplete() -> None:
 def draft_has_content(draft: dict[str, Any] | None) -> bool:
     if not draft:
         return False
-    keys = ("english_text", "french_text", "swahili_text", "portuguese_text")
+    keys = ("english_text", "french_text", "swahili_text", "portuguese_text", "kinyarwanda_text", "english_caption_text")
     return any((draft.get(k) or "").strip() for k in keys)

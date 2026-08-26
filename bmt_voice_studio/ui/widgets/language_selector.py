@@ -144,7 +144,9 @@ class LanguageSelector(QWidget):
         hint = QLabel("Select one or more languages for today's devotional.")
         hint.setObjectName("appSubtitle")
         hint.setWordWrap(True)
+        self._hint = hint
         root.addWidget(hint)
+        self._allowed_ids: set[str] | None = None
 
         self._grid_host = QWidget()
         self._grid = QGridLayout(self._grid_host)
@@ -176,29 +178,50 @@ class LanguageSelector(QWidget):
             w = item.widget()
             if w is not None:
                 w.setParent(self._grid_host)
-        for index, cfg in enumerate(selectable_daily_languages()):
+        visible_cfgs = [
+            cfg
+            for cfg in selectable_daily_languages()
+            if self._allowed_ids is None or cfg.language_id in self._allowed_ids
+        ]
+        for index, cfg in enumerate(visible_cfgs):
             card = self._cards[cfg.language_id]
+            card.setVisible(True)
             self._grid.addWidget(card, index // cols, index % cols)
+        for cfg in selectable_daily_languages():
+            if cfg.language_id not in {c.language_id for c in visible_cfgs}:
+                self._cards[cfg.language_id].setVisible(False)
+
+    def set_hint(self, text: str) -> None:
+        self._hint.setText(text)
+
+    def set_allowed_ids(self, ids: list[str] | None) -> None:
+        self._allowed_ids = {str(x).strip().lower() for x in ids} if ids else None
+        self._relayout_cards()
 
     def selected_ids(self) -> list[str]:
-        return normalize_selected_language_ids(
-            [lid for lid, card in self._cards.items() if card.isChecked()]
-        )
+        allowed = self._allowed_ids
+        raw = [lid for lid, card in self._cards.items() if card.isChecked() and (allowed is None or lid in allowed)]
+        fallback = ["sw"] if allowed == {"sw"} else None
+        return normalize_selected_language_ids(raw, fallback=fallback)
 
-    def set_selected_ids(self, ids: list[str]) -> None:
-        chosen = set(normalize_selected_language_ids(ids))
+    def set_selected_ids(self, ids: list[str], *, fallback: list[str] | None = None) -> None:
+        if self._allowed_ids is not None:
+            ids = [lid for lid in ids if lid in self._allowed_ids]
+            fallback = fallback or sorted(self._allowed_ids)
+        chosen = set(normalize_selected_language_ids(ids, fallback=fallback))
         for lid, card in self._cards.items():
             card.blockSignals(True)
             card._checked = lid in chosen
             card._refresh_style()
             card.blockSignals(False)
         if not self.selected_ids():
-            en = self._cards.get("en")
-            if en is not None:
-                en.blockSignals(True)
-                en._checked = True
-                en._refresh_style()
-                en.blockSignals(False)
+            fallback_id = (fallback or ["en"])[0]
+            card = self._cards.get(fallback_id) or self._cards.get("en")
+            if card is not None:
+                card.blockSignals(True)
+                card._checked = True
+                card._refresh_style()
+                card.blockSignals(False)
         self.refresh_readiness()
 
     def refresh_readiness(self) -> None:

@@ -103,6 +103,110 @@ def _warm_glow(img, width: int, height: int) -> None:
     img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(radius=max(8, width // 40))))
 
 
+def _render_hhr_intro_card(
+    project: VideoProject | None,
+    dest: Path,
+    *,
+    width: int = CANVAS_WIDTH,
+    height: int = CANVAS_HEIGHT,
+) -> Path:
+    """Hope & Healing Africa / Ruhuka Umutima 9:16 intro — soft green brand field."""
+    from PIL import Image, ImageDraw
+
+    from bmt_voice_studio.config.product import HHR_PRODUCT
+    from bmt_voice_studio.resources import logo_path as packaged_hhr_logo
+    from bmt_voice_studio.video.brand_strings import brand_strings
+    from bmt_voice_studio.video.title_cards import _prepare_logo, load_font, wrap_and_shrink
+
+    labels = brand_strings("sw", "hhr")
+    width = even_dim(width)
+    height = even_dim(height)
+    img = Image.new("RGBA", (width, height), (10, 46, 34, 255))
+    draw = ImageDraw.Draw(img)
+    scale = width / CANVAS_WIDTH
+    sx, sy, sw, sh = safe_rect(width, height)
+    cx = width // 2
+    y = sy + int(36 * scale)
+    cream = (244, 247, 242, 255)
+    gold = (214, 186, 122, 255)
+    muted = (168, 196, 180, 255)
+
+    logo = packaged_hhr_logo("hhr")
+    if logo and Path(logo).is_file():
+        try:
+            mark = _prepare_logo(Path(logo), max_w=min(int(920 * scale), sw), max_h=int(220 * scale))
+            img.alpha_composite(mark, (cx - mark.width // 2, y))
+            y += mark.height + int(28 * scale)
+        except Exception:
+            pass
+
+    font_title = load_font(max(28, int(52 * scale)), bold=True)
+    draw.text((cx, y), labels["title_line1"], font=font_title, fill=cream, anchor="mt")
+    y += int(62 * scale)
+    draw.text((cx, y), labels["title_line2"], font=font_title, fill=cream, anchor="mt")
+    y += int(70 * scale)
+    font_tag = load_font(max(18, int(28 * scale)), bold=True)
+    draw.text((cx, y), labels["daily_devotional"], font=font_tag, fill=muted, anchor="mt")
+    y += int(56 * scale)
+
+    bar_w = min(sw, int(960 * scale))
+    bar_x = (width - bar_w) // 2
+    bar_h = int(72 * scale)
+    _rounded_rect(draw, (bar_x, y, bar_x + bar_w, y + bar_h), int(18 * scale), (8, 36, 26, 255))
+    font_kicker = load_font(max(14, int(22 * scale)), bold=True)
+    kicker = labels.get("kicker") or HHR_PRODUCT.kicker
+    draw.text((cx, y + bar_h // 2), kicker, font=font_kicker, fill=cream, anchor="mm")
+    y += bar_h + int(28 * scale)
+
+    font_meta = load_font(max(14, int(20 * scale)), bold=False)
+    draw.text((cx, y), f"{labels['written_by']} {HHR_PRODUCT.author}", font=font_meta, fill=gold, anchor="mt")
+    y += int(48 * scale)
+
+    week = ""
+    topic = ""
+    pretty_date = ""
+    if project is not None:
+        week = (project.week_focus or project.month_theme or "").strip()
+        topic = (project.topic or project.title or "").strip()
+        if project.devotional_date:
+            from bmt_voice_studio.video.title_cards import _pretty_date
+
+            pretty_date = (_pretty_date(project) or "").upper()
+    if week:
+        font_week_l = load_font(max(14, int(18 * scale)), bold=True)
+        draw.text((cx, y), labels.get("week_label") or "WEEKLY THEME", font=font_week_l, fill=muted, anchor="mt")
+        y += int(32 * scale)
+        lines, font_week = wrap_and_shrink(
+            draw, week, bar_w - int(40 * scale), start_size=int(30 * scale), min_size=16, max_lines=2, bold=True
+        )
+        for line in lines:
+            draw.text((cx, y), line, font=font_week, fill=cream, anchor="mt")
+            y += int(40 * scale)
+        y += int(12 * scale)
+
+    panel_h = int(280 * scale)
+    panel_box = (bar_x, y, bar_x + bar_w, min(height - int(120 * scale), y + panel_h))
+    _rounded_rect(draw, panel_box, int(18 * scale), (244, 247, 242, 255))
+    font_topic_l = load_font(max(14, int(20 * scale)), bold=True)
+    draw.text((bar_x + int(36 * scale), y + int(24 * scale)), labels["topic"], font=font_topic_l, fill=(10, 46, 34, 255))
+    body = topic or labels["default_topic"]
+    lines, font_topic = wrap_and_shrink(
+        draw, body, bar_w - int(80 * scale), start_size=int(36 * scale), min_size=18, max_lines=4, bold=True
+    )
+    ty = y + int(70 * scale)
+    for line in lines:
+        draw.text((bar_x + int(36 * scale), ty), line, font=font_topic, fill=(10, 32, 24, 255))
+        ty += int(44 * scale)
+    if pretty_date:
+        font_date = load_font(max(16, int(26 * scale)), bold=True)
+        draw.text((cx, height - int(88 * scale)), pretty_date, font=font_date, fill=gold, anchor="mt")
+
+    dest = Path(dest)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    img.convert("RGB").save(dest, "PNG")
+    return dest
+
+
 def render_locked_intro_card(
     project: VideoProject | None,
     dest: Path,
@@ -113,8 +217,13 @@ def render_locked_intro_card(
     """Crisp 9:16 locked brand card. Labels follow project language; topic/date from project."""
     from PIL import Image, ImageDraw
 
+    from bmt_voice_studio.config.product import is_hhr
     from bmt_voice_studio.video.brand_strings import brand_strings
     from bmt_voice_studio.video.title_cards import load_font, wrap_and_shrink
+
+    product = getattr(project, "product_mode", None) if project else None
+    if is_hhr(product):
+        return _render_hhr_intro_card(project, dest, width=width, height=height)
 
     labels = brand_strings(getattr(project, "language", None) if project else None)
     width = even_dim(width)
@@ -251,7 +360,14 @@ def render_locked_intro_card(
     return dest
 
 
-def embed_locked_artwork(mp3_path: Path | str, jpeg_bytes: bytes, *, title: str = "", date_label: str = "") -> bool:
+def embed_locked_artwork(
+    mp3_path: Path | str,
+    jpeg_bytes: bytes,
+    *,
+    title: str = "",
+    date_label: str = "",
+    product: str | None = None,
+) -> bool:
     """Attach 9:16 cover art so players/WhatsApp show the locked card, not a generated still."""
     path = Path(mp3_path)
     if not path.is_file() or path.suffix.lower() != ".mp3":
@@ -279,7 +395,14 @@ def embed_locked_artwork(mp3_path: Path | str, jpeg_bytes: bytes, *, title: str 
         tags.delall("TPE1")
         tags.add(TPE1(encoding=3, text=AUTHOR))
         tags.delall("TALB")
-        tags.add(TALB(encoding=3, text=f"Believers Manna Today {date_label}".strip()))
+        from bmt_voice_studio.config.product import is_hhr
+
+        album = (
+            "Hope & Healing Africa — RUHUKA UMUTIMA"
+            if is_hhr(product)
+            else "Believers Manna Today"
+        )
+        tags.add(TALB(encoding=3, text=f"{album} {date_label}".strip()))
         tags.save(str(path), v2_version=3)
         return True
     except Exception:

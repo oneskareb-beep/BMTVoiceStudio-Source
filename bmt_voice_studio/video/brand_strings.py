@@ -70,6 +70,24 @@ def normalize_language(language: str | None) -> str:
     return "en"
 
 
-def brand_strings(language: str | None) -> dict[str, str]:
-    """Return full cover/outro strings for this language."""
+_HHR_BRAND = {
+    "title_line1": "HOPE & HEALING",
+    "title_line2": "AFRICA",
+    "series_title": "HOPE AND HEALING AFRICA",
+    "daily_devotional": "RUHUKA UMUTIMA",
+    "written_by": "Chaplain:",
+    "topic": "DAILY TOPIC :",
+    "remain_blessed": "Remain Blessed",
+    "default_topic": "Chaplaincy Message",
+    "kicker": "CHAPLAINCY MESSAGE FOR THE DAY",
+    "week_label": "WEEKLY THEME",
+}
+
+
+def brand_strings(language: str | None, product: str | None = None) -> dict[str, str]:
+    """Return full cover/outro strings for this language / ministry product."""
+    from bmt_voice_studio.config.product import is_hhr
+
+    if is_hhr(product):
+        return dict(_HHR_BRAND)
     return dict(_BRAND[normalize_language(language)])

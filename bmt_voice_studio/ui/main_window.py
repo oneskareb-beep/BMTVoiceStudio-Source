@@ -24,7 +24,7 @@ from bmt_voice_studio import __app_name__, __version__
 from bmt_voice_studio.config.paths import first_run_marker
 from bmt_voice_studio.config.settings import get_settings, save_settings
 from bmt_voice_studio.daily.layout import daily_exports_root
-from bmt_voice_studio.resources import load_app_icon, logo_label
+from bmt_voice_studio.resources import apply_logo_label, load_app_icon, logo_label
 from bmt_voice_studio.ui.dialogs.about import AboutDialog
 from bmt_voice_studio.ui.dialogs.daily_welcome import DailyWelcomeDialog
 from bmt_voice_studio.ui.dialogs.first_run import FirstRunDialog
@@ -57,21 +57,42 @@ class MainWindow(QMainWindow):
 
         header = QWidget()
         header.setObjectName("appHeader")
-        header.setFixedHeight(68)
+        header.setFixedHeight(88)
+        self.app_header = header
         h = QHBoxLayout(header)
-        h.setContentsMargins(20, 10, 20, 10)
+        h.setContentsMargins(20, 8, 20, 8)
         h.setSpacing(12)
-        h.addWidget(logo_label(max_width=96, max_height=50, parent=header))
+        self.header_logo = logo_label(max_width=96, max_height=50, parent=header)
+        h.addWidget(self.header_logo)
         titles = QVBoxLayout()
         titles.setSpacing(1)
         titles.setContentsMargins(0, 2, 0, 2)
-        title = QLabel("BMT Voice Studio")
-        title.setObjectName("appTitle")
+        self.lbl_app_title = QLabel("BMT Voice Studio")
+        self.lbl_app_title.setObjectName("appTitle")
+        self.lbl_app_tagline = QLabel("Believers Manna Today")
+        self.lbl_app_tagline.setObjectName("appTagline")
         self.lbl_header_date = QLabel("")
         self.lbl_header_date.setObjectName("headerDate")
-        titles.addWidget(title)
+        titles.addWidget(self.lbl_app_title)
+        titles.addWidget(self.lbl_app_tagline)
         titles.addWidget(self.lbl_header_date)
         h.addLayout(titles, 1)
+        product_wrap = QWidget()
+        product_wrap.setObjectName("workspaceSwitch")
+        product_row = QHBoxLayout(product_wrap)
+        product_row.setContentsMargins(4, 4, 4, 4)
+        product_row.setSpacing(4)
+        self.btn_product_bmt = QPushButton("BMT")
+        self.btn_product_hhr = QPushButton("HHR")
+        self.btn_product_bmt.setToolTip("Believers Manna Today")
+        self.btn_product_hhr.setToolTip("Hope & Healing Africa — Ruhuka Umutima")
+        for btn in (self.btn_product_bmt, self.btn_product_hhr):
+            btn.setObjectName("modeButton")
+            btn.setCheckable(True)
+            btn.setMinimumWidth(72)
+            btn.setCursor(Qt.CursorShape.PointingHandCursor)
+            product_row.addWidget(btn)
+        h.addWidget(product_wrap)
         mode_wrap = QWidget()
         mode_wrap.setObjectName("workspaceSwitch")
         mode_row = QHBoxLayout(mode_wrap)
@@ -153,11 +174,54 @@ class MainWindow(QMainWindow):
         self.page_video.job_busy.connect(self._on_job_busy)
         self.btn_mode_daily.clicked.connect(lambda: self.show_workspace("daily"))
         self.btn_mode_video.clicked.connect(lambda: self.show_workspace("video"))
+        self.btn_product_bmt.clicked.connect(lambda: self.set_product_mode("bmt"))
+        self.btn_product_hhr.clicked.connect(lambda: self.set_product_mode("hhr"))
 
         s = get_settings()
         s.last_page = "daily"
         s.start_page = "daily"
         save_settings(s)
+        self.set_product_mode(getattr(s, "product_mode", "bmt") or "bmt", persist=False)
+
+    def set_product_mode(self, product: str, *, persist: bool = True) -> None:
+        from bmt_voice_studio.config.product import get_product, normalize_product
+
+        mode = normalize_product(product)
+        profile = get_product(mode)
+        self.btn_product_bmt.setChecked(mode == "bmt")
+        self.btn_product_hhr.setChecked(mode == "hhr")
+        self.lbl_app_title.setText(profile.title)
+        self.lbl_app_tagline.setText(profile.tagline)
+        apply_logo_label(self.header_logo, max_width=96, max_height=50, product=mode)
+        self.setWindowTitle(f"{profile.title} — {__version__}")
+        if mode == "hhr":
+            self.app_header.setStyleSheet(
+                "QWidget#appHeader { background-color: #0A2E22; border-bottom: 1px solid #1E5A44; }"
+            )
+            self.lbl_app_title.setStyleSheet("color: #F4F7F2;")
+            self.lbl_app_tagline.setStyleSheet("color: #A8C4B4;")
+            self.lbl_header_date.setStyleSheet("color: #D6E2D8;")
+        else:
+            self.app_header.setStyleSheet("")
+            self.lbl_app_title.setStyleSheet("")
+            self.lbl_app_tagline.setStyleSheet("")
+            self.lbl_header_date.setStyleSheet("")
+        if persist:
+            s = get_settings()
+            s.product_mode = mode
+            save_settings(s)
+        self.page_daily.apply_product_mode(mode)
+        self.page_video.apply_product_mode(mode)
+        video = self.workspace.currentWidget() is self.page_video
+        self.status.showMessage(
+            "Video Maker" if video else f"{profile.short_label} ready — {profile.tagline}"
+        )
+
+    def _product_ready_message(self) -> str:
+        from bmt_voice_studio.config.product import get_product
+
+        profile = get_product(getattr(get_settings(), "product_mode", "bmt"))
+        return f"{profile.short_label} ready — {profile.tagline}"
 
     def _resolve_data_library(self) -> None:
         skip = (os.environ.get("BMT_SKIP_LIBRARY_DIALOG") or "").strip().lower() in {"1", "true", "yes"}
@@ -186,7 +250,7 @@ class MainWindow(QMainWindow):
         self.workspace.setCurrentWidget(self.page_video if video else self.page_daily)
         self.btn_mode_daily.setChecked(not video)
         self.btn_mode_video.setChecked(video)
-        self.status.showMessage("Video Maker" if video else "Daily BMT ready")
+        self.status.showMessage("Video Maker" if video else self._product_ready_message())
         self._sync_header_date()
         if video:
             self.page_video._refresh_date_label()

@@ -11,7 +11,7 @@ from bmt_voice_studio.video.geometry import (
     positioned_crop_rect,
     safe_rect,
 )
-from bmt_voice_studio.video.models import TEMPLATE_BMT_MINIMAL, TEMPLATE_BMT_NATURE, TextStyle, VideoProject, hex_to_rgb
+from bmt_voice_studio.video.models import TEMPLATE_BMT_MINIMAL, TEMPLATE_BMT_NATURE, TEMPLATE_HHR_GREEN, TextStyle, VideoProject, hex_to_rgb
 
 CLASSIC = {
     "bg": (15, 20, 28, 255),
@@ -37,7 +37,6 @@ WHITE = CLASSIC["white"]
 MUTED = CLASSIC["muted"]
 SOFT = CLASSIC["soft"]
 
-
 MINIMAL = {
     "bg": (8, 10, 14, 255),
     "gold": (232, 232, 228, 255),
@@ -45,6 +44,15 @@ MINIMAL = {
     "muted": (168, 172, 178, 255),
     "soft": (220, 222, 224, 255),
     "scrim": (8, 10, 14),
+}
+
+HHR = {
+    "bg": (10, 46, 34, 255),
+    "gold": (214, 186, 122, 255),
+    "white": (244, 247, 242, 255),
+    "muted": (168, 196, 180, 255),
+    "soft": (214, 226, 216, 255),
+    "scrim": (8, 36, 26),
 }
 
 
@@ -55,6 +63,8 @@ def palette_for(project: VideoProject | str | None) -> dict:
         return NATURE
     if raw == TEMPLATE_BMT_MINIMAL:
         return MINIMAL
+    if raw == TEMPLATE_HHR_GREEN:
+        return HHR
     return CLASSIC
 
 
@@ -78,6 +88,9 @@ def render_template_chip(template_id: str, width: int = 44, height: int = 78):
         d.ellipse([width - 28, height - 20, width - 2, height + 8], fill=(18, 64, 38, 255))
     elif raw == TEMPLATE_BMT_MINIMAL:
         d.rectangle([width // 2 - 8, height - 16, width // 2 + 8, height - 15], fill=gold)
+    elif raw == TEMPLATE_HHR_GREEN:
+        d.ellipse([8, height - 28, width - 8, height + 8], fill=(18, 92, 62, 255))
+        d.rectangle([10, 34, width - 10, 36], fill=gold)
     else:
         d.rectangle([10, 34, width - 10, 36], fill=gold)
         d.rectangle([6, height - 20, width - 6, height - 7], fill=(22, 30, 42, 255))
@@ -200,11 +213,19 @@ def body_fill(project: VideoProject | None, fallback=(244, 247, 251, 255)):
 
 
 def resolve_logo_path(project: VideoProject) -> Path | None:
-    for candidate in (project.logo_path, str(packaged_logo_path() or "")):
+    from bmt_voice_studio.config.product import is_hhr
+
+    product = getattr(project, "product_mode", None)
+    packaged = packaged_logo_path(product)
+    for candidate in (project.logo_path, str(packaged or "")):
         if candidate:
             path = Path(candidate)
             if path.is_file():
                 return path
+    if is_hhr(product):
+        fallback = packaged_logo_path("hhr")
+        if fallback and fallback.is_file():
+            return fallback
     return None
 
 
@@ -407,7 +428,7 @@ def render_outro_card(
             pass
     from bmt_voice_studio.video.brand_strings import brand_strings
 
-    labels = brand_strings(project.language)
+    labels = brand_strings(project.language, getattr(project, "product_mode", None))
     block_h += _text_size(draw, labels["series_title"], font_series)[1] + int(12 * scale)
     block_h += _text_size(draw, labels["daily_devotional"], font_kicker)[1]
     y = sy + max(0, (sh - block_h) // 2)
@@ -527,7 +548,7 @@ def render_lower_third(
     font_kicker = load_font(max(16, int(20 * type_scale(project, width))), bold=True)
     from bmt_voice_studio.video.brand_strings import brand_strings
 
-    series = brand_strings(project.language)["series_title"]
+    series = brand_strings(project.language, getattr(project, "product_mode", None))["series_title"]
     draw_styled_text(draw, (sx + 22, y), series, font_kicker, project, pal["gold"])
     y += 28
     if project.branding.lower_third_date and project.devotional_date:

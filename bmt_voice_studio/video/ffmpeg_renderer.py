@@ -939,17 +939,29 @@ class VideoRenderer:
                     captions_for_language,
                     clip_caption_cues,
                     ffmpeg_ass_filter,
+                    hhr_dual_captions,
                     shift_caption_cues,
                     write_ass,
                 )
+                from bmt_voice_studio.config.product import is_hhr
 
-                cues = captions_for_language(
-                    project.devotional_date,
-                    project.language,
-                    audio_duration=plan.audio_duration,
-                    skip_header=bool(getattr(project, "skip_caption_header", True)),
-                    caption_mode=str(getattr(project, "caption_content", "") or ""),
-                )
+                if is_hhr(getattr(project, "product_mode", None)):
+                    cues = hhr_dual_captions(
+                        project.devotional_date,
+                        audio_duration=plan.audio_duration,
+                        kinyarwanda_text=str(getattr(project, "kinyarwanda_text", "") or ""),
+                        english_caption_text=str(getattr(project, "english_caption_text", "") or ""),
+                        skip_header=bool(getattr(project, "skip_caption_header", True)),
+                        caption_mode=str(getattr(project, "caption_content", "") or ""),
+                    )
+                else:
+                    cues = captions_for_language(
+                        project.devotional_date,
+                        project.language,
+                        audio_duration=plan.audio_duration,
+                        skip_header=bool(getattr(project, "skip_caption_header", True)),
+                        caption_mode=str(getattr(project, "caption_content", "") or ""),
+                    )
                 if cues:
                     offset = float(plan.intro_duration or 0.0) - float(plan.audio_start or 0.0)
                     cues = shift_caption_cues(cues, offset)
