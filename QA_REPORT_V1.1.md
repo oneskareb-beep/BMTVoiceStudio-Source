@@ -1,5 +1,7 @@
 # BMT Voice Studio — QA Report v1.1.0
 
+> Historical archive. Current product is v1.3.38. Source: https://github.com/oneskareb-beep/BMTVoiceStudio-Source
+
 **Decision target:** Version 1.1.0 Daily BMT  
 **Date:** 12 August 2026  
 **Feature:** Daily BMT Production (workflow + UX)

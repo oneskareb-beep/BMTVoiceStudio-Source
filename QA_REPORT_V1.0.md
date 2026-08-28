@@ -1,5 +1,7 @@
 # BMT Voice Studio — QA Report v1.0.0 (FINAL GATE)
 
+> Historical archive. Current product is v1.3.38. Source: https://github.com/oneskareb-beep/BMTVoiceStudio-Source
+
 **QA date:** 2026-08-12  
 **Decision target:** Version 1.0.0 FINAL  
 **Build:** `release\BMTVoiceStudio-1.0.0\BMTVoiceStudio.exe`

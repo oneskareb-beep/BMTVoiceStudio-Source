@@ -1,5 +1,7 @@
 # PRODUCTION TEST REPORT — August 13, 2026
 
+> Historical v1.0.0 production test. Current product is v1.3.38. Source: https://github.com/oneskareb-beep/BMTVoiceStudio-Source
+
 **Product:** BMT Voice Studio v1.0.0  
 **Test package:** `C:\Users\aganz\Downloads\BMT_V1_PRODUCTION_TEST_AUG13.zip`  
 **Test date (run):** 2026-08-12  

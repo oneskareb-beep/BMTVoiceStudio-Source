@@ -1,60 +1,34 @@
-# Swahili Future Plan — Daily BMT third language
+# Language status — Swahili, Portuguese, HHR
 
-**Status:** Planning document only. Swahili is **not** implemented in the current release.
+**Status (v1.3.38):** Swahili **is implemented**. This file used to say it was not. Keep this document as remaining-work notes, not as a “do not ship Swahili” plan.
 
-Visible Daily BMT production remains **English + French only**.
+Source: https://github.com/oneskareb-beep/BMTVoiceStudio-Source
 
-Do not add Swahili UI panels, navigation, placeholders, or voice guesses until a controlled phase begins.
+## What shipped
 
----
+- Daily Audio can generate **English, French, Swahili, and Portuguese**.
+- Swahili and Portuguese use `LanguageProductionConfig` plus regional approval (`Help → Troubleshooting → Regional Voice Setup`).
+- Release builds seed SW/PT as production-ready from `bmt_voice_studio/config/production_defaults.json`.
+- **HHR** (Hope & Healing Africa — Ruhuka Umutima) speaks Swahili, shows a required Kinyarwanda transcript (large captions), and English captions (medium).
 
-## Architecture preparation (already in place)
+## Voice defaults (do not treat these as Congo/Angola-native Edge catalogs)
+
+| Language | Target | Spoken Edge voices (approved fallback) |
+|---|---|---|
+| Swahili | Congo/DRC (`sw-CD`) | `sw-TZ-DaudiNeural` / `sw-TZ-RehemaNeural` |
+| Portuguese | Angola (`pt-AO`) | `pt-BR-AntonioNeural` / `pt-BR-FranciscaNeural` |
+
+Congo-specific and Angola-specific Edge neural voices are still unavailable, so production uses the approved fallback locales above.
+
+## Remaining work (not a rewrite)
+
+1. Ministry listen-through of Swahili (BMT + HHR) and Portuguese on real scripts: Bible references, names, phone numbers, dates, ordinals, religious terms.
+2. If a better Edge or Piper pair is approved, record it in Regional Voice Setup — do not silently change English/French presets.
+3. HHR-only polish: Kinyarwanda transcript layout, caption size, and branding on real chaplaincy messages.
+4. Optional: restore a reachable Voice Manager so Piper packs are easier to install when Edge is down.
+
+## Architecture (already in place)
 
 - `LanguageProductionConfig` binds display labels to a voice preset / pipeline.
-- `DailyLanguagePanel` is a reusable script + validate panel.
-- Daily BMT should instantiate enabled language configs rather than hard-coding only two unique widgets forever.
-
-Future work can register a Swahili config without rewriting the entire Daily BMT engine.
-
----
-
-## Future phases
-
-### Phase 1 — Voice research
-Research and select approved Swahili male and female neural voices suitable for BMT devotionals.
-
-### Phase 2 — Locale / accent
-Determine required locale or accent (for example East African or DRC-oriented Swahili) based on ministry production requirements.
-
-### Phase 3 — Source pipeline configuration
-Create a Swahili source-pipeline configuration in the same canonical config used by English/French (voices, rate, pitch, volume, pause, post-processing, export rules).
-
-### Phase 4 — Pronunciation validation
-Validate pronunciation of:
-
-- Bible references
-- personal and ministry names
-- phone numbers
-- dates
-- ordinal numbering
-- religious terminology
-
-### Phase 5 — Live sample audio
-Run live sample audio validation against reference scripts before enabling production.
-
-### Phase 6 — Daily BMT panel
-Add a third Daily BMT language panel using `DailyLanguagePanel` + Swahili `LanguageProductionConfig`.
-
-### Phase 7 — Generation orchestration
-Update generation orchestration to EN + FR + SW when Swahili is approved.
-
-### Phase 8 — Outputs / history / reports
-Update exports, filenames, history columns, and production reports for three languages.
-
----
-
-## Explicit non-goals for this document
-
-- Do not choose or hard-code Swahili voice IDs here.
-- Do not claim Swahili production is supported.
-- Do not ship Swahili UI until Phases 1–5 are complete.
+- `DailyLanguagePanel` is the reusable script + validate panel.
+- Generation orchestration already covers EN + FR + SW + PT and the HHR product profile.

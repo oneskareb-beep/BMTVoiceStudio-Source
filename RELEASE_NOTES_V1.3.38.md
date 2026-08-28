@@ -1,5 +1,11 @@
 # BMT Voice Studio v1.3.38 — Update-channel release
 
+## GitHub
+
+- Source: https://github.com/oneskareb-beep/BMTVoiceStudio-Source
+- This zip: https://github.com/oneskareb-beep/BMTVoiceStudio/releases/tag/v1.3.38
+- Latest: https://github.com/oneskareb-beep/BMTVoiceStudio/releases/latest
+
 ## Why this build
 
 Portable Windows package for **Help → Check for Updates**. Existing 1.3.37 installs should see this as newer and download `BMTVoiceStudio-1.3.38-Windows-x64-Portable.zip` from GitHub Latest.

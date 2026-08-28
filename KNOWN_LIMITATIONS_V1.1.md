@@ -1,6 +1,8 @@
 # BMT Voice Studio — Known Limitations v1.1.0
 
-All v1.0 limitations still apply. Daily BMT adds the following notes.
+> Historical archive (v1.1.0). Swahili / extra languages **did** ship later. Current notes: [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md). Source: https://github.com/oneskareb-beep/BMTVoiceStudio-Source
+
+All v1.0 limitations still applied at v1.1. Daily BMT added the following notes.
 
 ## Daily BMT
 

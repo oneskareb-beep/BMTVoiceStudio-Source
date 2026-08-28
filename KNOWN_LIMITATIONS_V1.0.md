@@ -1,5 +1,7 @@
 # BMT Voice Studio — Known Limitations v1.0.0
 
+> Historical archive (v1.0.0). Current notes: [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md). Source: https://github.com/oneskareb-beep/BMTVoiceStudio-Source
+
 1. **Edge TTS requires internet.** Online neural synthesis depends on Microsoft’s Edge TTS service availability and voice catalog.
 
 2. **Piper voice packs require an initial download.** Offline models and the Piper engine are not shipped inside the EXE (size). Download them once via Voice Manager; afterward they work offline under `%LOCALAPPDATA%\BMTVoiceStudio\models\`.
