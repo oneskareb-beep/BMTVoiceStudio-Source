@@ -35,7 +35,7 @@ EXPECTED_RC2 = "4aae46472270b7dec4571e3f19f9ce1be98c9019402f7bbfe9488416b7221cb9
 EXPECTED_VOICES = {
     "english": {"en-NG-AbeoNeural", "en-NG-EzinneNeural"},
     "french": {"fr-FR-HenriNeural", "fr-FR-DeniseNeural"},
-    "swahili": {"sw-TZ-DaudiNeural", "sw-TZ-RehemaNeural"},
+    "swahili": {"sw-KE-RafikiNeural", "sw-KE-ZuriNeural"},
     "portuguese": {"pt-BR-AntonioNeural", "pt-BR-FranciscaNeural"},
 }
 CONTAMINATION_MARKERS = {

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bmt-voice-studio"
-version = "1.3.38"
+version = "1.3.39"
 description = "BMT Voice Studio — Daily Audio, Video Maker, BMT or HHR"
 readme = "README.md"
 requires-python = ">=3.11"

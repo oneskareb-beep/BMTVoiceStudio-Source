@@ -19,6 +19,13 @@ from bmt_voice_studio.config.production_defaults import (
     language_defaults,
     release_voice_pair,
 )
+from bmt_voice_studio.config.swahili_tts import (
+    SWAHILI_FEMALE_VOICE,
+    SWAHILI_LOCALE,
+    SWAHILI_MALE_VOICE,
+    is_tanzania_voice,
+    remap_swahili_voice,
+)
 
 # Seeded from bundled production defaults (SW / PT approved fallbacks).
 DEFAULT_REGIONAL: dict[str, dict[str, Any]] = default_regional_languages()
@@ -35,19 +42,41 @@ def _merge_entry(default: dict[str, Any], loaded: dict[str, Any] | None) -> dict
     return merged
 
 
+def _upgrade_swahili_east_african(entry: dict[str, Any]) -> bool:
+    """Move saved Tanzania voices to Kenya East African neural."""
+    male = str(entry.get("approved_male") or entry.get("male_voice") or "")
+    female = str(entry.get("approved_female") or entry.get("female_voice") or "")
+    locale = str(entry.get("fallback_locale") or "")
+    if not (is_tanzania_voice(male) or is_tanzania_voice(female) or locale == "sw-TZ"):
+        return False
+    entry["approved_male"] = SWAHILI_MALE_VOICE
+    entry["approved_female"] = SWAHILI_FEMALE_VOICE
+    entry["male_voice"] = SWAHILI_MALE_VOICE
+    entry["female_voice"] = SWAHILI_FEMALE_VOICE
+    entry["fallback_locale"] = SWAHILI_LOCALE
+    entry["notes"] = "East African Kenya neural (Rafiki + Zuri)"
+    return True
+
+
 def load_regional_approvals() -> dict[str, Any]:
     """Load user regional file, or release defaults when absent (fresh machine)."""
     path = regional_approval_file()
     data = {"languages": deepcopy(DEFAULT_REGIONAL)}
-    if not path.exists():
-        return data
-    try:
-        loaded = json.loads(path.read_text(encoding="utf-8"))
-        langs = loaded.get("languages") or {}
-        for key, default in DEFAULT_REGIONAL.items():
-            data["languages"][key] = _merge_entry(default, langs.get(key))
-    except Exception:
-        pass
+    existed = path.exists()
+    if existed:
+        try:
+            loaded = json.loads(path.read_text(encoding="utf-8"))
+            langs = loaded.get("languages") or {}
+            for key, default in DEFAULT_REGIONAL.items():
+                data["languages"][key] = _merge_entry(default, langs.get(key))
+        except Exception:
+            pass
+    sw = data["languages"].get("sw")
+    if isinstance(sw, dict) and _upgrade_swahili_east_african(sw) and existed:
+        try:
+            save_regional_approvals(data)
+        except Exception:
+            pass
     return data
 
 
@@ -91,6 +120,9 @@ def approved_voices_for(language_id: str) -> tuple[str, str]:
     entry = get_regional_entry(language_id)
     male = (entry.get("approved_male") or entry.get("male_voice") or "").strip()
     female = (entry.get("approved_female") or entry.get("female_voice") or "").strip()
+    if language_id == "sw":
+        male = remap_swahili_voice(male)
+        female = remap_swahili_voice(female)
     if male and female and entry.get("status") == "approved" and entry.get("approved_by_user"):
         return male, female
     return release_voice_pair(language_id)

@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from bmt_voice_studio.config.french_tts import remap_french_preset
+from bmt_voice_studio.config.swahili_tts import remap_swahili_preset
 from bmt_voice_studio.config.pipeline_config import PipelineSettings
 
 _CONFIG_PATH = Path(__file__).with_name("source_pipeline_presets.json")
@@ -58,7 +59,7 @@ def _load_presets() -> dict[str, VoicePreset]:
     raw = json.loads(_CONFIG_PATH.read_text(encoding="utf-8"))
     out: dict[str, VoicePreset] = {}
     for preset_id, entry in raw.get("presets", {}).items():
-        out[preset_id] = remap_french_preset(VoicePreset.from_dict(entry))
+        out[preset_id] = remap_swahili_preset(remap_french_preset(VoicePreset.from_dict(entry)))
     return out
 
 

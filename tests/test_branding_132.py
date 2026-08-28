@@ -33,9 +33,9 @@ def _ico_sizes(path: Path) -> set[tuple[int, int]]:
 
 
 def test_final_identity_134():
-    assert __version__ == "1.3.38"
+    assert __version__ == "1.3.39"
     assert BUILD_LABEL == "Final"
-    assert (ROOT / "VERSION").read_text(encoding="utf-8").strip() == "1.3.38"
+    assert (ROOT / "VERSION").read_text(encoding="utf-8").strip() == "1.3.39"
     assert "dev" not in __version__.lower()
 
 
@@ -64,10 +64,10 @@ def test_ico_has_windows_taskbar_sizes():
 
 
 def test_final_spec_embeds_ico():
-    spec = (ROOT / "BMTVoiceStudio-1.3.38.spec").read_text(encoding="utf-8")
+    spec = (ROOT / "BMTVoiceStudio-1.3.39.spec").read_text(encoding="utf-8")
     assert 'icon="bmt_voice_studio/resources/bmt_voice_studio.ico"' in spec
-    assert "BMTVoiceStudio-1.3.38" in spec
-    assert "1.3.38-dev" not in spec
+    assert "BMTVoiceStudio-1.3.39" in spec
+    assert "1.3.39-dev" not in spec
 
 
 def test_branding_pads_are_exactly_ten():

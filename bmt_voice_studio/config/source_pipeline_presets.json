@@ -54,9 +54,9 @@
     "bmt_swahili": {
       "id": "bmt_swahili",
       "name": "BMT SWAHILI",
-      "language": "sw-TZ",
-      "male_voice": "sw-TZ-DaudiNeural",
-      "female_voice": "sw-TZ-RehemaNeural",
+      "language": "sw-KE",
+      "male_voice": "sw-KE-RafikiNeural",
+      "female_voice": "sw-KE-ZuriNeural",
       "rate": "-10%",
       "pitch": "-3Hz",
       "volume": "+5%",

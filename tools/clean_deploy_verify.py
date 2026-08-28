@@ -95,7 +95,7 @@ def main() -> int:
     }
     check("en_voices", voices["en"] == ("en-NG-AbeoNeural", "en-NG-EzinneNeural"), str(voices["en"]))
     check("fr_voices", voices["fr"] == ("fr-FR-HenriNeural", "fr-FR-DeniseNeural"), str(voices["fr"]))
-    check("sw_voices", voices["sw"] == ("sw-TZ-DaudiNeural", "sw-TZ-RehemaNeural"), str(voices["sw"]))
+    check("sw_voices", voices["sw"] == ("sw-KE-RafikiNeural", "sw-KE-ZuriNeural"), str(voices["sw"]))
     check("pt_voices", voices["pt"] == ("pt-BR-AntonioNeural", "pt-BR-FranciscaNeural"), str(voices["pt"]))
 
     # Short multi-language generation against packaged environment using source runner

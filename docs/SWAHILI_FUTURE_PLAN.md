@@ -1,6 +1,6 @@
 # Language status — Swahili, Portuguese, HHR
 
-**Status (v1.3.38):** Swahili **is implemented**. This file used to say it was not. Keep this document as remaining-work notes, not as a “do not ship Swahili” plan.
+**Status (v1.3.39):** Swahili **is implemented** with East African Kenya neural voices.
 
 Source: https://github.com/oneskareb-beep/BMTVoiceStudio-Source
 
@@ -15,10 +15,10 @@ Source: https://github.com/oneskareb-beep/BMTVoiceStudio-Source
 
 | Language | Target | Spoken Edge voices (approved fallback) |
 |---|---|---|
-| Swahili | Congo/DRC (`sw-CD`) | `sw-TZ-DaudiNeural` / `sw-TZ-RehemaNeural` |
+| Swahili | Congo/DRC (`sw-CD`) | `sw-KE-RafikiNeural` / `sw-KE-ZuriNeural` (East Africa) |
 | Portuguese | Angola (`pt-AO`) | `pt-BR-AntonioNeural` / `pt-BR-FranciscaNeural` |
 
-Congo-specific and Angola-specific Edge neural voices are still unavailable, so production uses the approved fallback locales above.
+Congo-specific and West African Swahili neural voices do not exist on Edge TTS. Production uses Kenya (East Africa). Tanzania voices are remapped to Kenya on upgrade.
 
 ## Remaining work (not a rewrite)
 

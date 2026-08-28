@@ -111,7 +111,7 @@ $manifest = @{
     voice_configuration = @{
         en = @{ locale = "en-NG"; male_voice = "en-NG-AbeoNeural"; female_voice = "en-NG-EzinneNeural"; rate = "-10%"; pitch = "-3Hz"; volume = "+0%"; pause_ms = 500; low_pass_hz = 7000 }
         fr = @{ locale = "fr-FR"; male_voice = "fr-FR-HenriNeural"; female_voice = "fr-FR-DeniseNeural"; rate = "-8%"; pitch = "-1Hz"; volume = "+5%"; pause_ms = 500; low_pass_hz = $null }
-        sw = @{ target_region = "Congo/DRC"; target_locale = "sw-CD"; fallback_locale = "sw-TZ"; male_voice = "sw-TZ-DaudiNeural"; female_voice = "sw-TZ-RehemaNeural"; rate = "-10%"; pitch = "-3Hz"; volume = "+5%"; pause_ms = 500; low_pass_hz = 7000; approved_fallback = $true }
+        sw = @{ target_region = "Congo/DRC"; target_locale = "sw-CD"; fallback_locale = "sw-KE"; male_voice = "sw-KE-RafikiNeural"; female_voice = "sw-KE-ZuriNeural"; rate = "-10%"; pitch = "-3Hz"; volume = "+5%"; pause_ms = 500; low_pass_hz = 7000; approved_fallback = $true }
         pt = @{ target_region = "Angola"; target_locale = "pt-AO"; fallback_locale = "pt-BR"; male_voice = "pt-BR-AntonioNeural"; female_voice = "pt-BR-FranciscaNeural"; rate = "-10%"; pitch = "-3Hz"; volume = "+5%"; pause_ms = 500; low_pass_hz = 7000; approved_fallback = $true }
     }
     audio_delivery = @{

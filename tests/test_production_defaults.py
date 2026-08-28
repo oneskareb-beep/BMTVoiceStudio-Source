@@ -62,12 +62,12 @@ def test_swahili_portuguese_release_default_voices(tmp_path, monkeypatch):
     sw = get_language_config("sw")
     pt = get_language_config("pt")
     assert sw is not None and pt is not None
-    assert sw.male_voice == "sw-TZ-DaudiNeural"
-    assert sw.female_voice == "sw-TZ-RehemaNeural"
+    assert sw.male_voice == "sw-KE-RafikiNeural"
+    assert sw.female_voice == "sw-KE-ZuriNeural"
     assert pt.male_voice == "pt-BR-AntonioNeural"
     assert pt.female_voice == "pt-BR-FranciscaNeural"
     assert sw.target_locale == "sw-CD"
-    assert sw.fallback_locale == "sw-TZ"
+    assert sw.fallback_locale == "sw-KE"
     assert pt.target_locale == "pt-AO"
     assert pt.fallback_locale == "pt-BR"
     assert sw.target_region.replace(" ", "") in {"Congo/DRC", "Congo/DRC"}
@@ -79,7 +79,7 @@ def test_daily_ui_details_hide_fallback_tech():
     text = production_details_text()
     assert "Swahili" in text.upper() or "SWAHILI" in text
     assert "Ready" in text
-    for banned in ("sw-TZ", "pt-BR", "DaudiNeural", "AntonioNeural", "fallback_locale", "Tanzania", "Brazil"):
+    for banned in ("sw-TZ", "sw-KE", "pt-BR", "DaudiNeural", "RafikiNeural", "AntonioNeural", "fallback_locale", "Tanzania", "Kenya", "Brazil"):
         assert banned not in text
 
 
@@ -88,8 +88,8 @@ def test_preset_voices_match_release_defaults():
     assert BMT_ENGLISH.female_voice == "en-NG-EzinneNeural"
     assert BMT_FRENCH.male_voice == "fr-FR-HenriNeural"
     assert BMT_FRENCH.female_voice == "fr-FR-DeniseNeural"
-    assert BMT_SWAHILI.male_voice == "sw-TZ-DaudiNeural"
-    assert BMT_SWAHILI.female_voice == "sw-TZ-RehemaNeural"
+    assert BMT_SWAHILI.male_voice == "sw-KE-RafikiNeural"
+    assert BMT_SWAHILI.female_voice == "sw-KE-ZuriNeural"
     assert BMT_PORTUGUESE.male_voice == "pt-BR-AntonioNeural"
     assert BMT_PORTUGUESE.female_voice == "pt-BR-FranciscaNeural"
     assert BMT_FRENCH.pipeline.lowpass_hz is None
@@ -149,7 +149,7 @@ def test_release_voice_pairs():
         "fr-FR-HenriNeural",
         "fr-FR-DeniseNeural",
     )
-    assert release_voice_pair("sw") == ("sw-TZ-DaudiNeural", "sw-TZ-RehemaNeural")
+    assert release_voice_pair("sw") == ("sw-KE-RafikiNeural", "sw-KE-ZuriNeural")
     assert release_voice_pair("pt") == ("pt-BR-AntonioNeural", "pt-BR-FranciscaNeural")
 
 
@@ -162,6 +162,6 @@ def test_fresh_regional_file_seeds_release_defaults(tmp_path, monkeypatch):
     assert pt["status"] == "approved"
     assert sw["approved_by_user"] is True
     assert pt["approved_by_user"] is True
-    assert sw["fallback_locale"] == "sw-TZ"
+    assert sw["fallback_locale"] == "sw-KE"
     assert pt["fallback_locale"] == "pt-BR"
     assert language_defaults("sw")["approved_fallback"] is True

@@ -1,6 +1,6 @@
 # BMT Voice Studio
 
-Windows desktop app for daily ministry audio and video. Current release: **1.3.38**.
+Windows desktop app for daily ministry audio and video. Current release: **1.3.39**.
 
 **Daily Audio • Video Maker • BMT or HHR**
 
@@ -33,7 +33,7 @@ Online synthesis uses Edge neural TTS. Piper is an offline fallback (models are 
 |---|---|
 | English | BMT ready (`en-NG`) |
 | French | BMT ready (`fr-FR`) |
-| Swahili | BMT optional + HHR spoken language (Congo/DRC target; `sw-TZ` neural fallback) |
+| Swahili | BMT optional + HHR spoken language (Congo/DRC target; East African Kenya neural) |
 | Portuguese | BMT optional (Angola target; `pt-BR` neural fallback) |
 | Kinyarwanda | HHR transcript / large captions (not a separate TTS language) |
 

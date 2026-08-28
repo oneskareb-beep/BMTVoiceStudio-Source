@@ -52,6 +52,7 @@ def test_voice_ssml_lang_from_shortname():
     assert voice_ssml_lang("fr-FR-HenriNeural") == "fr-FR"
     assert voice_ssml_lang("en-NG-AbeoNeural") == "en-NG"
     assert voice_ssml_lang("sw-TZ-DaudiNeural") == "sw-TZ"
+    assert voice_ssml_lang("sw-KE-RafikiNeural") == "sw-KE"
     assert voice_ssml_lang("pt-BR-FranciscaNeural") == "pt-BR"
     assert (
         voice_ssml_lang("Microsoft Server Speech Text to Speech Voice (fr-FR, HenriNeural)")

@@ -1,4 +1,4 @@
-# BMT Voice Studio — Known Limitations (v1.3.38)
+# BMT Voice Studio — Known Limitations (v1.3.39)
 
 Current product notes. Older files `KNOWN_LIMITATIONS_V1.0.md` and `KNOWN_LIMITATIONS_V1.1.md` are historical.
 
@@ -17,7 +17,7 @@ Current product notes. Older files `KNOWN_LIMITATIONS_V1.0.md` and `KNOWN_LIMITA
 ## Languages
 
 - English and French are the BMT default pair.
-- Swahili and Portuguese are implemented. Release builds seed them as Ready from bundled production defaults. Congo-specific Edge voices may be unavailable; Swahili uses `sw-TZ-*` as the approved fallback. Portuguese Angola uses `pt-BR-*` as the approved fallback.
+- Swahili and Portuguese are implemented. Congo-specific Edge voices do not exist; production Swahili uses East African Kenya neural (`sw-KE-RafikiNeural` / `sw-KE-ZuriNeural`). There is no West African Swahili neural catalog. Portuguese Angola uses `pt-BR-*` as the approved fallback.
 - HHR uses Swahili for speech, Kinyarwanda as the required on-screen transcript, and English as secondary captions. Kinyarwanda is not synthesized as its own TTS language.
 - Changing validated BMT English/French voice IDs is not a user-facing setting.
 

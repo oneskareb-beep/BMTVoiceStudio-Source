@@ -404,15 +404,15 @@ class RegionalVoiceSetupDialog(QDialog):
         QThreadPool.globalInstance().start(AsyncWorker(work, signals))
 
     def _approve_trial_pair(self) -> None:
-        """Human-only approve of Daudi + Rehema — never called automatically."""
+        """Human-only approve of East African Kenya voices — never called automatically."""
         answer = QMessageBox.question(
             self,
-            "Approve Swahili trial pair?",
-            "Approve Daudi + Rehema (Tanzania) as the Swahili production fallback?\n\n"
-            "Target remains Congo / DRC.\n"
-            "Voices stay labeled as Tanzania fallback — not Congo.\n\n"
-            "Male: sw-TZ-DaudiNeural\n"
-            "Female: sw-TZ-RehemaNeural\n\n"
+            "Approve Swahili production voices?",
+            "Approve Rafiki + Zuri (Kenya, East Africa) as the Swahili production voices?\n\n"
+            "Target remains Congo / DRC. Edge has no Congo or West African Swahili neural voices.\n"
+            "Kenya is the East African pronunciation pair.\n\n"
+            "Male: sw-KE-RafikiNeural\n"
+            "Female: sw-KE-ZuriNeural\n\n"
             "This is an explicit human decision.",
         )
         if answer != QMessageBox.StandardButton.Yes:
@@ -420,10 +420,10 @@ class RegionalVoiceSetupDialog(QDialog):
         try:
             approve_fallback_candidate(
                 "sw",
-                fallback_locale="sw-TZ",
-                male_voice="sw-TZ-DaudiNeural",
-                female_voice="sw-TZ-RehemaNeural",
-                candidate_id="sw_tanzania_trial",
+                fallback_locale="sw-KE",
+                male_voice="sw-KE-RafikiNeural",
+                female_voice="sw-KE-ZuriNeural",
+                candidate_id="sw_kenya_east_african",
             )
         except ValueError as exc:
             QMessageBox.warning(self, "Approve", str(exc))
@@ -431,11 +431,11 @@ class RegionalVoiceSetupDialog(QDialog):
         self._refresh_trial_panel()
         self._refresh_all_badges()
         self._refresh_target_status()
-        self.log.append("APPROVED Swahili trial pair: Daudi + Rehema (sw-TZ)")
+        self.log.append("APPROVED Swahili production pair: Rafiki + Zuri (sw-KE East Africa)")
         QMessageBox.information(
             self,
             "Approved",
-            "Daudi + Rehema approved for Swahili Daily production fallback.",
+            "Rafiki + Zuri (Kenya) approved for Swahili Daily production.",
         )
 
     def _play_male_review(self, candidate_id: str) -> None:
